@@ -114,10 +114,23 @@ def md_to_notebook(md_file):
 
                 # Ajouter le bloc de réponse
                 cells.append(nbf.v4.new_raw_cell("Réponse : "))
+                
+                # Ajouter la correction --> à discuter si corrigé ou ici
+#                 cells.append(nbf.v4.new_markdown_cell("""<details>
+# <summary style="border-left:3px solid #3c763d; border-radius:2pt; width:100%; color:#3c763d; padding:6px; background-color: #dff0d8"> 
+# Réponse
+# </summary>  
+# 
+# <div style="border-left:3px solid #3c763d; border-radius:2pt; color:#3c763d; padding:6px; background-color: #eff0e8">"""+good_answer+"""
+# </div>
+# </details>
+#                 """))
             else:
                 # Numérotation des options avec des lettres
                 if line.startswith('{'):
-                    answer = re.sub(r'\{(f|v)\}`', item + ') ', line.strip())[:-1]
+                    answer = re.sub(r'\{(f|v)\}`', item + ') ', line.strip())[:-1]                    
+                    if '{v}' in line:
+                        good_answer = answer
                     item = chr(ord(item)+1)
                 else:
                     answer = line.strip()
@@ -151,6 +164,14 @@ def md_to_notebook(md_file):
         
 
     nb.cells = cells
+    cells.append(nbf.v4.new_markdown_cell("""---
+
+#### Remarque générale
+
+Ce document est une adaptation d'un ressource pédagogique tiré du catalogue modulo https://modulo-info.ch/. Il est sous license Creative Commons [BY-NC-SA](https://creativecommons.org/licenses/?lang=fr)
+![Licence Creative Commons](https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png)
+
+    """))
 
     # Nom du fichier de sortie identique au fichier Markdown, mais avec extension .ipynb
     ipynb_file = os.path.splitext(md_file)[0] + '.ipynb'
