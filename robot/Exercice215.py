@@ -11,4 +11,6 @@ init("Exercice 215")
 # à compléter avec les instructions haut(n), bas(n), gauche(n),
 # droite(n) qui permettent de déplacer le robot de n cases
 
+# écrire votre code ici
+
 fin_robot()
