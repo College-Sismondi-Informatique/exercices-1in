@@ -2,6 +2,9 @@ import nbformat as nbf
 import re
 import os
 
+from hashlib import sha256
+
+
 def md_to_notebook(md_file):
     with open(md_file, 'r', encoding='utf-8') as f:
         lines = f.readlines()
@@ -113,18 +116,18 @@ def md_to_notebook(md_file):
                 cells.append(nbf.v4.new_markdown_cell('<h3 style="color:chocolate;background-color:papayawhip;" > <i class="fa fa-question" aria-hidden="true"> </i> &nbsp; Quizz </h3> \n \n'+ markdown_question))
 
                 # Ajouter le bloc de réponse
-                cells.append(nbf.v4.new_raw_cell("Réponse : "))
+                cells.append(nbf.v4.new_raw_cell("Ma réponse : "))
                 
                 # Ajouter la correction --> à discuter si corrigé ou ici
-#                 cells.append(nbf.v4.new_markdown_cell("""<details>
-# <summary style="border-left:3px solid #3c763d; border-radius:2pt; width:100%; color:#3c763d; padding:6px; background-color: #dff0d8"> 
-# Réponse
-# </summary>  
-# 
-# <div style="border-left:3px solid #3c763d; border-radius:2pt; color:#3c763d; padding:6px; background-color: #eff0e8">"""+good_answer+"""
-# </div>
-# </details>
-#                 """))
+                cells.append(nbf.v4.new_markdown_cell("""<details>
+<summary style="border-left:3px solid #3c763d; border-radius:2pt; width:100%; color:#3c763d; padding:6px; background-color: #dff0d8"> 
+Réponse
+</summary>  
+
+<div style="border-left:3px solid #3c763d; border-radius:2pt; color:#3c763d; padding:6px; background-color: #eff0e8">"""+good_answer+"""
+</div>
+</details>
+                """))
             else:
                 # Numérotation des options avec des lettres
                 if line.startswith('{'):
@@ -160,10 +163,15 @@ def md_to_notebook(md_file):
             else:
                 cells.append(nbf.v4.new_markdown_cell(line))
                 
-        
-        
-
-    nb.cells = cells
+    
+    cells.insert(0,nbf.v4.new_markdown_cell('''<div style="padding:20px;background-color:papayawhip;" > 
+<h3 style="color:chocolate"> <i class="fa fa-info" aria-hidden="true"> </i> &nbsp; Remarque introductive &nbsp;  <i class="fa fa-info" aria-hidden="true"></h3> 
+<p> Ce fichier est fait pour être lu sur le site <a href="https://notebook.basthon.fr/"><img src='https://notebook.basthon.fr/assets/efede5218c9087496f16.png' style="border: 0; display:inline; margin: 0 5px; height:30px" alt="Basthon"/></a>. <br>
+    
+Si vous l'avez ouvert avec un autre programme, comme Jupyter notebook, vous riquez de rencontrer quelques bugs. <br>
+Veuillez cliquez sur <a href="https://notebook.basthon.fr/">ce lien</a> et y charger ce fichier à l'aide du bouton "Ouvrir"  &nbsp; <i class="fa fa-folder" aria-hidden="true"> </i>
+</p> </div>    '''))
+    
     cells.append(nbf.v4.new_markdown_cell("""---
 
 #### Remarque générale
@@ -172,6 +180,12 @@ Ce document est une adaptation d'un ressource pédagogique tiré du catalogue mo
 ![Licence Creative Commons](https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png)
 
     """))
+    
+    nb.cells = cells
+    
+    # Replace unique-random-ids by idx+sha
+    for i,c in enumerate(cells):
+        c.id = str(i)+'-'+sha256(bytes(c.source, 'utf-8')).hexdigest()[:6]
 
     # Nom du fichier de sortie identique au fichier Markdown, mais avec extension .ipynb
     ipynb_file = os.path.splitext(md_file)[0] + '.ipynb'
