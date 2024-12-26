@@ -1,0 +1,28 @@
+stages:
+  - format
+
+format_files:
+  stage: format
+  image: python:3.10
+  before_script:
+    - pip install jq nbformat
+  script:
+    # Récupère les fichiers JSON et IPYNB modifiés dans le commit
+    - MODIFIED_JSON_FILES=$(git diff --name-only HEAD~1 HEAD | grep '\.json$' || true)
+    - MODIFIED_IPYNB_FILES=$(git diff --name-only HEAD~1 HEAD | grep '\.ipynb$' || true)
+    # Si aucun fichier n'est modifié, terminer le job
+    - if [ -z "$MODIFIED_JSON_FILES" ] && [ -z "$MODIFIED_IPYNB_FILES" ]; then echo "No files to format."; exit 0; fi
+    # Formatage des fichiers JSON
+    - for file in $MODIFIED_JSON_FILES; do
+        jq . "$file" > "$file.formatted" && mv "$file.formatted" "$file";
+      done
+    # Formatage des fichiers IPYNB
+    - for file in $MODIFIED_IPYNB_FILES; do
+        python -m nbformat --to notebook --input "$file" --output "$file.formatted" && mv "$file.formatted" "$file";
+      done
+    # Ajouter les modifications pour le commit (optionnel)
+    - git add $MODIFIED_JSON_FILES $MODIFIED_IPYNB_FILES
+  rules:
+    - changes:
+        - "*.json"
+        - "*.ipynb"
