@@ -7,21 +7,43 @@ format_files:
   before_script:
     - pip install jq nbformat
   script:
-    # Récupère les fichiers JSON et IPYNB modifiés dans le commit
-    - MODIFIED_JSON_FILES=$(git diff --name-only HEAD~1 HEAD | grep '\.json$' || true)
-    - MODIFIED_IPYNB_FILES=$(git diff --name-only HEAD~1 HEAD | grep '\.ipynb$' || true)
-    # Si aucun fichier n'est modifié, terminer le job
-    - if [ -z "$MODIFIED_JSON_FILES" ] && [ -z "$MODIFIED_IPYNB_FILES" ]; then echo "No files to format."; exit 0; fi
+    # Crée un script Python pour formater les fichiers .ipynb
+    - |
+      echo '
+      import nbformat
+      import sys
+
+      def reformat_notebook(file_path):
+          with open(file_path, "r", encoding="utf-8") as f:
+              notebook = nbformat.read(f, as_version=4)
+
+          with open(file_path, "w", encoding="utf-8") as f:
+              nbformat.write(notebook, f)
+
+      if __name__ == "__main__":
+          for file_path in sys.argv[1:]:
+              reformat_notebook(file_path)
+              print(f"Formatted: {file_path}")
+      ' > reformat_ipynb.py
+    # Identifier les fichiers modifiés
+    - MODIFIED_JSON_FILES=$(git diff --name-only $CI_COMMIT_BEFORE_SHA $CI_COMMIT_SHA | grep '\.json$' || true)
+    - MODIFIED_IPYNB_FILES=$(git diff --name-only $CI_COMMIT_BEFORE_SHA $CI_COMMIT_SHA | grep '\.ipynb$' || true)
+    - echo "Modified JSON files: $MODIFIED_JSON_FILES"
+    - echo "Modified IPYNB files: $MODIFIED_IPYNB_FILES"
     # Formatage des fichiers JSON
     - for file in $MODIFIED_JSON_FILES; do
         jq . "$file" > "$file.formatted" && mv "$file.formatted" "$file";
       done
     # Formatage des fichiers IPYNB
     - for file in $MODIFIED_IPYNB_FILES; do
-        python -m nbformat --to notebook --input "$file" --output "$file.formatted" && mv "$file.formatted" "$file";
+        python reformat_ipynb.py "$file";
       done
-    # Ajouter les modifications pour le commit (optionnel)
+    # Ajouter et pousser les modifications
+    - git config --global user.email "ci-bot@example.com"
+    - git config --global user.name "CI Bot"
     - git add $MODIFIED_JSON_FILES $MODIFIED_IPYNB_FILES
+    - git commit -m "Formatted JSON and IPYNB files" || echo "No changes to commit."
+    - git push origin $CI_COMMIT_REF_NAME
   rules:
     - changes:
         - "*.json"
