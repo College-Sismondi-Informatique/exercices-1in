@@ -11,8 +11,8 @@ format_files:
     - git fetch origin $CI_COMMIT_REF_NAME
     - git checkout $CI_COMMIT_SHA
     # Identifier les fichiers modifiés
-    - MODIFIED_JSON_FILES=$(git diff --name-only $CI_COMMIT_BEFORE_SHA $CI_COMMIT_SHA | grep '\.json$' || true)
-    - MODIFIED_IPYNB_FILES=$(git diff --name-only $CI_COMMIT_BEFORE_SHA $CI_COMMIT_SHA | grep '\.ipynb$' || true)
+    - MODIFIED_JSON_FILES=$(git diff --name-only $CI_COMMIT_BEFORE_SHA $CI_COMMIT_SHA | grep '$.json$' || true)
+    - MODIFIED_IPYNB_FILES=$(git diff --name-only $CI_COMMIT_BEFORE_SHA $CI_COMMIT_SHA | grep '$.ipynb$' || true)
     - echo "Modified JSON files:"  $MODIFIED_JSON_FILES
     - echo "Modified IPYNB files:" $MODIFIED_IPYNB_FILES
     # Formatage des fichiers JSON
