@@ -6,6 +6,8 @@ format_json:
   image: alpine:latest
   before_script:
     - apk add --no-cache jq git
+    - git remote remove origin
+    - git remote add origin https://oauth2:$OAUTH_TOKEN@$CI_SERVER_HOST/$CI_PROJECT_PATH.git
   script:
     - echo "Current branch:" $CI_COMMIT_REF_NAME
     - for file in Notebooks/*.ipynb; do jq --indent 1 . "$file" > tmp && mv tmp "$file"; done
