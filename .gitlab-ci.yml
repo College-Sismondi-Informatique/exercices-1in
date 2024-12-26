@@ -10,7 +10,7 @@ format_json:
     - git remote add origin https://oauth2:$OAUTH_TOKEN@$CI_SERVER_HOST/$CI_PROJECT_PATH.git
   script:
     - echo "Current branch:" $CI_COMMIT_REF_NAME
-    - for file in Notebooks/*.ipynb; do jq --indent 1 . "$file" > tmp && mv tmp "$file"; done
+    - for file in Notebooks/*.ipynb; do jq --raw-output --sort-keys --indent 1 . "$file" > tmp && mv tmp "$file"; done
     - git config --global user.email "ci-bot@example.com"
     - git config --global user.name "CI Bot"
     - git fetch --unshallow
