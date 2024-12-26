@@ -14,7 +14,7 @@ format_json:
     - git fetch --unshallow
     - git add --all
     - git commit -m "Formatted IPYNB files"
-    - git push origin $CI_COMMIT_REF_NAME
+    - git push origin HEAD:main
   rules:
     - changes:
         - "*.ipynb"
