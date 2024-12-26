@@ -8,6 +8,8 @@ format_json:
     - apk add --no-cache jq git
   script:
     - for file in Notebooks/*.ipynb; do jq --indent 1 . "$file" > tmp && mv tmp "$file"; done
+    - git config --global user.email "ci-bot@example.com"
+    - git config --global user.name "CI Bot"
     - git add --all
     - git commit -m "Formatted IPYNB files"
     - git push origin $CI_COMMIT_REF_NAME
