@@ -116,11 +116,11 @@ def md_to_notebook(md_file):
                 cells.append(nbf.v4.new_markdown_cell('<h3 style="color:chocolate;background-color:papayawhip;" > <i class="fa fa-question" aria-hidden="true"> </i> &nbsp; Quizz </h3> \n \n'+ markdown_question))
 
                 # Ajouter le bloc de réponse
-                cells.append(nbf.v4.new_raw_cell("Ma réponse : "))
+                cells.append(nbf.v4.new_raw_cell(" <i class="fa fa-angle-right" aria-hidden="true"> Ma réponse : "))
                 
                 # Ajouter la correction --> à discuter si corrigé ou ici
                 cells.append(nbf.v4.new_markdown_cell("""<details>
-<summary style="border-left:3px solid #3c763d; border-radius:2pt; width:100%; color:#3c763d; padding:6px; background-color: #dff0d8"> 
+<summary style="border-left:3px solid #3c763d; border-radius:2pt; width:100%; color:#3c763d; padding:6px; background-color: #dff0d8">  <i class="fa fa-angle-right" aria-hidden="true">
 Réponse
 </summary>  
 
