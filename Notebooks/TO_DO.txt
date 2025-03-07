@@ -15,10 +15,14 @@ NB boucle for
   - Rajouter une image de la syntaxe d'une boucle for où on voit la notion de bloc et le param du nombre itération
   - Insister plus sur le terme indentation
 
+NB 01
+-----
+  - Ajouter des explications plus détaillé sur le fonctionnement du NB
 
 Général
 -------
   - enlever les indices de toutes les boucles
   - Faire des évals standardisé pour chaque NB
+  - Faire une distinction entre exercices d'exploration (renommé en activité) et exercices d'application
 
 
