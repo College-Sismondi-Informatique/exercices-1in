@@ -1,5 +1,24 @@
 Notebook sur les print
 ----------------------
-  - Ajouter un info sur la diff " vs ', comment afficher les caractères spéciaux "\" par exemple, ou "\n"...
+  - Ajouter une info sur la diff " vs ', comment afficher les caractères spéciaux "\" par exemple, ou "\n"...
   - Ajouter un dessin de division de nombre pour comprendre les opérations % et //
   - Expliquer le end=
+
+TP dessin
+---------
+  - penser une partie des exercices des premiers notebook comme une préparation au TP dessin
+      - Exo sur des formes.
+      - Pour les fonctions insister sur le besoin de revenir au point de départ avec la même orientation.
+
+NB boucle for
+------------
+  - Rajouter une image de la syntaxe d'une boucle for où on voit la notion de bloc et le param du nombre itération
+  - Insister plus sur le terme indentation
+
+
+Général
+-------
+  - enlever les indices de toutes les boucles
+  - Faire des évals standardisé pour chaque NB
+
+
