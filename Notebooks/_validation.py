@@ -4,6 +4,7 @@ from basthon.autoeval import (
     ValidateFunction,
     ValidateFunctionPretty,
     validationclass,
+    ValidateSequences
 )
 from typing import Any
 import time
