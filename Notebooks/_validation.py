@@ -35,9 +35,9 @@ class ValidateQuiz(ValidateSequences[str, Any]):
         """
         :param ids_and_values: a dict with quiz Ids (<form id="">)as key
             and list of correct answers values as values to test against checked answers
-            (<label><input type="checkbox" name="option" value="A"> A) Réponse A</label><br>)
+            (<label><input type="checkbox" name="C" value="correct"> C) Réponse C</label><br>)
             defined in the user namespace (top-level).
-        :param ids_and_values: alternatively, a str 
+        :param ids_and_values: alternatively, a simple str with the id. Answer will then be searched in the source page
         :param **kwargs: passed to parent constructor.
         """
         if isinstance(ids_and_values, str): # If no answer is specified, find correct answer in HTML "value" parameter
@@ -72,7 +72,48 @@ class ValidateQuiz(ValidateSequences[str, Any]):
 
     def handle_full_success(self):
         print("👏 Bravo, bonne(s) réponse(s) !")
-            
+
+        
+@validationclass
+class ValidateTextInput(ValidateSequences[str, str]):
+    """A class to validate html form checkbox quiz. """
+
+    def __init__(self, ids_and_values: dict[str, str], **kwargs):
+        """
+        :param ids_and_values: a dict with input Ids (<form id="">)as key
+            and correct answer as values to test against checked answers
+            (<label>Ma réponse : <input type="text" id="12" value=""></label><br>)
+            defined in the user namespace (top-level).
+        :param ids_and_values: alternatively, a simple str with the id. Answer will then be searched in the source page
+        :param **kwargs: passed to parent constructor.
+        """
+        if isinstance(ids_and_values, str): # If no answer is specified, find correct answer in HTML "value" parameter
+            inputs = document.getElementById(ids_and_values).querySelectorAll('input[type="text"]')
+            ids_and_values = {ids_and_values:inputs[0].id}
+        super().__init__(ids_and_values.keys(), ids_and_values.values(), **kwargs)
+
+    def compute_result(self, id: str, precomputed_data: Any) -> Any:
+        # Return value of input field
+        inputs = document.getElementById(id).querySelectorAll('input[type="text"]')
+        return inputs[0].value
+
+    def handle_failure(self, name: str, target: Any, value: Any) -> bool:
+        print(
+            f"Mauvaise(s) réponse(s), essaie encore.",
+            file=sys.stderr,
+        )
+        return False
+
+    def handle_exception(self, exc: Exception, name: str, target: Any) -> bool:
+        print(
+            f"Erreur Il y a un problème avec : '{name}'",
+            file=sys.stderr,
+        )
+        return False
+
+    def handle_full_success(self):
+        print("👏 Bravo, bonne(s) réponse(s) !")
+                        
             
 #####  Réponses exos
 ### Exemples
@@ -80,6 +121,5 @@ class ValidateQuiz(ValidateSequences[str, Any]):
 # continuer_si_10 = LitLaConsigne()
 # test_quiz_exemple = ValidateQuiz({"quiz1": ["C"], "quiz2": ["A","B"]})
 # test_quiz_exemple_2 = ValidateQuiz("quiz1") # same but with answer in source page
-
-
-
+# test_text_input_1 = ValidateTextInput({"question1.1": "42"})
+# test_text_input_2 = ValidateTextInput("question1.1") # same but with answer in source page
