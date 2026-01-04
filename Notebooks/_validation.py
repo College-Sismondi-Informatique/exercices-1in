@@ -123,3 +123,8 @@ class ValidateTextInput(ValidateSequences[str, str]):
 # test_quiz_exemple_2 = ValidateQuiz("quiz1") # same but with answer in source page
 # test_text_input_1 = ValidateTextInput({"question1.1": "42"})
 # test_text_input_2 = ValidateTextInput("question1.1") # same but with answer in source page
+
+
+# Notebook 5a
+test_5a_3 = ValidateVariables({"A": 121})
+test_5a_4a = ValidateVariables({"x": 70})
