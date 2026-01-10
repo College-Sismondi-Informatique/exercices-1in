@@ -123,21 +123,21 @@ def remove_shortcuts():
                      "jupyter-notebook:select-next-cell"]
     
 
-    for k,v in js.Jupyter.keyboard_manager.command_shortcuts._shortcuts.to_py().items():
+    for k,v in Jupyter.keyboard_manager.command_shortcuts._shortcuts.to_py().items():
         if v not in keep_shortcut or len(k) == 1:
             if isinstance(v,dict):
                 for k1 in v:
-                    js.Jupyter.keyboard_manager.command_shortcuts.remove_shortcut(f"{k},{k1}")
+                    Jupyter.keyboard_manager.command_shortcuts.remove_shortcut(f"{k},{k1}")
             else:
-                js.Jupyter.keyboard_manager.command_shortcuts.remove_shortcut(k)
+                Jupyter.keyboard_manager.command_shortcuts.remove_shortcut(k)
                 
-    for k,v in js.Jupyter.keyboard_manager.edit_shortcuts._shortcuts.to_py().items():
+    for k,v in Jupyter.keyboard_manager.edit_shortcuts._shortcuts.to_py().items():
         if v not in keep_shortcut or len(k) == 1:
             if isinstance(v, dict):
                 for k1 in v:
-                    js.Jupyter.keyboard_manager.edit_shortcuts.remove_shortcut(f"{k},{k1}")
+                    Jupyter.keyboard_manager.edit_shortcuts.remove_shortcut(f"{k},{k1}")
             else:
-                js.Jupyter.keyboard_manager.edit_shortcuts.remove_shortcut(k)
+                Jupyter.keyboard_manager.edit_shortcuts.remove_shortcut(k)
                 
 remove_shortcuts()
                         
