@@ -9,7 +9,7 @@ from basthon.autoeval import (
 from typing import Any
 import time
 import sys
-from js import document, Reflect
+from js import document, Reflect, Jupyter
 
 ##### Classes custom
 @validationclass
@@ -113,6 +113,33 @@ class ValidateTextInput(ValidateSequences[str, str]):
 
     def handle_full_success(self):
         print("👏 Bravo, bonne(s) réponse(s) !")
+
+
+def remove_shortcuts():
+    keep_shortcut = ["jupyter-notebook:run-cell",
+                     "jupyter-notebook:run-cell-and-select-next",
+                     "jupyter-notebook:save-notebook",
+                     "jupyter-notebook:select-previous-cell",
+                     "jupyter-notebook:select-next-cell"]
+    
+
+    for k,v in js.Jupyter.keyboard_manager.command_shortcuts._shortcuts.to_py().items():
+        if v not in keep_shortcut or len(k) == 1:
+            if isinstance(v,dict):
+                for k1 in v:
+                    js.Jupyter.keyboard_manager.command_shortcuts.remove_shortcut(f"{k},{k1}")
+            else:
+                js.Jupyter.keyboard_manager.command_shortcuts.remove_shortcut(k)
+                
+    for k,v in js.Jupyter.keyboard_manager.edit_shortcuts._shortcuts.to_py().items():
+        if v not in keep_shortcut or len(k) == 1:
+            if isinstance(v, dict):
+                for k1 in v:
+                    js.Jupyter.keyboard_manager.edit_shortcuts.remove_shortcut(f"{k},{k1}")
+            else:
+                js.Jupyter.keyboard_manager.edit_shortcuts.remove_shortcut(k)
+                
+remove_shortcuts()
                         
             
 #####  Réponses exos
