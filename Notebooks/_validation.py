@@ -73,9 +73,8 @@ class ValidateQuiz(ValidateSequences[str, Any]):
     def handle_full_success(self):
         print("👏 Bravo, bonne(s) réponse(s) !")
 
-        
 @validationclass
-class ValidateTextInput(ValidateSequences[str, str]):
+class ValidateTextInput(ValidateSequences[str, str]): # TODO : Refactor ValidateTextInput and ValidateQuiz in one ValidateForm to check every input and signal error
     """A class to validate html form checkbox quiz. """
 
     def __init__(self, ids_and_values: dict[str, str], **kwargs):
@@ -89,13 +88,13 @@ class ValidateTextInput(ValidateSequences[str, str]):
         """
         if isinstance(ids_and_values, str): # If no answer is specified, find correct answer in HTML "value" parameter
             inputs = document.getElementById(ids_and_values).querySelectorAll('input[type="text"]')
-            ids_and_values = {ids_and_values:inputs[0].id}
+            ids_and_values = {ids_and_values:[i.id for i in inputs]}
         super().__init__(ids_and_values.keys(), ids_and_values.values(), **kwargs)
 
     def compute_result(self, id: str, precomputed_data: Any) -> Any:
         # Return value of input field
         inputs = document.getElementById(id).querySelectorAll('input[type="text"]')
-        return inputs[0].value
+        return [i.value for i in inputs] 
 
     def handle_failure(self, name: str, target: Any, value: Any) -> bool:
         print(
@@ -155,3 +154,4 @@ remove_shortcuts()
 # Notebook 5a
 test_5a_3 = ValidateVariables({"A": 121})
 test_5a_4a = ValidateVariables({"x": 70})
+test_5b_6b = ValidateVariables({"k": 10})
