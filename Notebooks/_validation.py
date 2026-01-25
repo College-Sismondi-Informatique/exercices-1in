@@ -119,7 +119,8 @@ def remove_shortcuts():
                      "jupyter-notebook:run-cell-and-select-next",
                      "jupyter-notebook:save-notebook",
                      "jupyter-notebook:select-previous-cell",
-                     "jupyter-notebook:select-next-cell"]
+                     "jupyter-notebook:select-next-cell",
+                     "jupyter-notebook:enter-edit-mode"]
     
 
     for k,v in Jupyter.keyboard_manager.command_shortcuts._shortcuts.to_py().items():
