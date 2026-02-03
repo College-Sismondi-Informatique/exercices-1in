@@ -2,7 +2,14 @@
 
 <p><img title="" src="https://notebook.basthon.fr/assets/efede5218c9087496f16.png" alt="Jupyter Notebook" width="119" height="31">   <strong>Notebooks de programmation<img title="" src="https://notebook.basthon.fr/assets/efede5218c9087496f16.png" alt="Jupyter Notebook" width="112" height="29"></strong></p>
 
+## Aide-mémoires 
+<a href="https://notebook.basthon.fr/?extensions=sequenced%2Cromd%2Clinenumbers&amp;kernel=python&amp;from=https://raw.githubusercontent.com/College-Sismondi-Informatique/exercices-1in/refs/heads/main/Notebooks/memo_turtle.ipynb" target="_blank" rel="noopener">Memo Turtle</a>
 
+
+## Projets
+<a href="https://notebook.basthon.fr/?extensions=sequenced%2Cromd%2Clinenumbers&amp;kernel=python&amp;from=https://raw.githubusercontent.com/College-Sismondi-Informatique/exercices-1in/refs/heads/main/Notebooks/TP_dessin.ipynb" target="_blank" rel="noopener">Énoncé projet dessin</span>&nbsp;</a>
+
+## Leçons 
 
 <table style="border-collapse: collapse; width: 70.2279%; height: 569.85px;" border="1"><colgroup><col style="width: 40.4464%;"><col style="width: 25.9321%;"><col style="width: 33.5763%;"></colgroup>
 <tbody>
@@ -65,3 +72,5 @@
 <p style="top: 219.617px;" data-mce-caret="after" data-mce-bogus="all"> </p>
 <p> <!-- --></p>
 <div class="mce-visual-caret mce-visual-caret-hidden" style="inset: 219.617px 1044px 790.617px; width: 1px; height: 572px;" data-mce-bogus="all"> </div>
+
+
