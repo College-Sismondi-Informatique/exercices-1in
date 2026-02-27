@@ -11,6 +11,24 @@ import time
 import sys
 from js import document, Reflect, Jupyter
 
+codes_dict = {}
+lastCode = ''
+
+
+def store_all_cells_content():
+    global codes_dict
+    for i, cell in enumerate(Jupyter.notebook.get_cells()):
+            codes_dict[i] = cell.code_mirror.getValue()
+
+def store_cell_content():
+    global codes_dict
+    codes_dict[Jupyter.notebook.get_selected_index()] = Jupyter.notebook.get_selected_cell().code_mirror.getValue()
+    
+def restore_all_cells_content():
+    for i, cell in enumerate(Jupyter.notebook.get_cells()):
+        if i in codes_dict:
+            cell.code_mirror.setValue(codes_dict[i])
+
 ##### Classes custom
 @validationclass
 class LitLaConsigne:
