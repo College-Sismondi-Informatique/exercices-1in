@@ -67,11 +67,11 @@
 <td style="height: 60px; text-align: center;"><a href="https://notebook.basthon.fr/?extensions=sequenced%2Cromd%2Clinenumbers&amp;kernel=python&amp;from=https://raw.githubusercontent.com/College-Sismondi-Informatique/exercices-1in/refs/heads/main/Notebooks/05b_Les_variables2.ipynb&amp;aux=https://raw.githubusercontent.com/College-Sismondi-Informatique/exercices-1in/refs/heads/main/Notebooks/_validation.py" target="_blank" rel="noopener">Leçon n°5b</a></td>
 <td style="height: 60px; text-align: center;"><a href="https://notebook.basthon.fr/?extensions=romd,linenumbers&amp;kernel=python&amp;from=https://raw.githubusercontent.com/College-Sismondi-Informatique/exercices-1in/refs/heads/main/Notebooks/05b_Les_variables2_corrige.ipynb&amp;aux=https://raw.githubusercontent.com/College-Sismondi-Informatique/exercices-1in/refs/heads/main/Notebooks/_validation.py" target="_blank" rel="noopener">Leçon n°5b - corrigé</a></td>
 </tr>
-        <tr style="height: 60px;">
-            <td style="height: 60px;">&nbsp;Les <strong>conditions</strong> </td>
-            <td style="height: 60px; text-align: center;"><a href="https://notebook.basthon.fr/?extensions=sequenced%2Cromd%2Clinenumbers&amp;kernel=python&amp;from=https://raw.githubusercontent.com/College-Sismondi-Informatique/exercices-1in/refs/heads/main/Notebooks/06_Les_conditions_partie1.ipynb&amp;aux=https://raw.githubusercontent.com/College-Sismondi-Informatique/exercices-1in/refs/heads/main/Notebooks/_validation.py" target="_blank" rel="noopener">Leçon n°6a</a></td>
-            <td style="height: 60px; text-align: center;"><a href="https://notebook.basthon.fr/?extensions=romd%2Clinenumbers&kernel=python&from=https://raw.githubusercontent.com/College-Sismondi-Informatique/exercices-1in/refs/heads/main/Notebooks/06_Les_conditions_partie1_correction.ipynb&aux=https://raw.githubusercontent.com/College-Sismondi-Informatique/exercices-1in/refs/heads/main/Notebooks/_validation.py" target="_blank" rel="noopener">Leçon n°6a - corrigé</a></td>
-        </tr>
+<tr style="height: 60px;">
+    <td style="height: 60px;">&nbsp;Les <strong>conditions</strong> </td>
+    <td style="height: 60px; text-align: center;"><a href="https://notebook.basthon.fr/?extensions=sequenced%2Cromd%2Clinenumbers&amp;kernel=python&amp;from=https://raw.githubusercontent.com/College-Sismondi-Informatique/exercices-1in/refs/heads/main/Notebooks/06_Les_conditions.ipynb&amp;aux=https://raw.githubusercontent.com/College-Sismondi-Informatique/exercices-1in/refs/heads/main/Notebooks/_validation.py" target="_blank" rel="noopener">Leçon n°6a</a></td>
+    <td style="height: 60px; text-align: center;"><a href="https://notebook.basthon.fr/?extensions=romd%2Clinenumbers&kernel=python&from=https://raw.githubusercontent.com/College-Sismondi-Informatique/exercices-1in/refs/heads/main/Notebooks/06_Les_conditions_correction.ipynb&aux=https://raw.githubusercontent.com/College-Sismondi-Informatique/exercices-1in/refs/heads/main/Notebooks/_validation.py" target="_blank" rel="noopener">Leçon n°6a - corrigé</a></td>
+</tr>
 </tbody>
 </table>
 <p style="top: 219.617px;" data-mce-caret="after" data-mce-bogus="all"> </p>
