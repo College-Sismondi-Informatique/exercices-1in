@@ -29,12 +29,12 @@ On a comme instructions à dispostion :
 * `taille(n)` # Taille de la n-ème crêpe en partant du haut
 * `retourner(n)` # Retourner sous la n-ème crêpe en partant du haut
 
-et on aurait besoin de `tasTrié()` et `plusGrande(n)`.
+et on aurait besoin de `tasTrié()` et `plusGrande(nombreCrepes)`.
 
 
 ### Introduction au return (10')
 
-Par groupes de 2-3, la moitié des groupes programme la fonction `tasTrié()` et l'autre moitié `plusGrande(n)`
+Par groupes de 2-3, la moitié des groupes programme la fonction `tasTrié()` et l'autre moitié `plusGrande(nombreCrepes)`
 
 
 ### Implémentation de fonction (15')
