@@ -1,41 +1,37 @@
-# Import librairie
-from crepes import init, taille, retourner
-
+#### Import librairie
+from crepes import *
 N = 7
 init(N)
 
 
-# Instructions disponibles :
-taille(3) # Taille de la 3e crêpe en partant du haut
-retourner(3) # Retourner sous la 3e crêpe en partant du haut
+#### Découverte de l'environnement
+# 1) Afficher la taille de la 3ème crêpe en partant du haut (attention, on commence à compter à 0).
+print(taille(2))
 
+# 2) Retourner sous la 4ème crêpe en partant du haut (attention, on commence à compter à 0).
+retourner(3) 
 
-# Fonctions nécessaires
-def tasTrié():
-    estTrié = True
-    for i in range(N-1):
-        if taille(i)> taille(i+1):
-            estTrié = False
-    return estTrié
+# 3) Afficher la taille de toutes les crêpes avec une boucle for.
+for k in range(7):
+    print(taille(k))
 
-def plusGrande(nombreCrepes=N):
-    idx = 0
-    for i in range(nombreCrepes):
-        if taille(i) > taille(idx):
-            idx = i            
-    return idx
-    
+# 4) Afficher la position de la plus grande crêpe parmi les 3 premières crêpes.
+print(plusGrande(3))
+
+# 5) Afficher si le tas est trié.
+print(tasTrié())
+  
 
 # Solution algorithme
-idx = N
+i = N
 while tasTrié() == False:
     
     # On retourne sous la plus grande non triée
-    tasDeCrepes = retourner(plusGrande(idx))
+    tasDeCrepes = retourner(plusGrande(i))
     
     # On retourne sous la 1ère non triée 
-    tasDeCrepes = retourner(idx-1)
+    tasDeCrepes = retourner(i-1)
     
-    idx = idx - 1
+    i = i - 1
 
 

@@ -1,6 +1,6 @@
 # Crêpier psychorigide
 
-## Introduction (5')
+## Introduction (10')
 Retour sur le cours précédent sur devine mon nombre:
 
 * Rappel de l'algorithme de résolution, 
@@ -22,46 +22,28 @@ Par groupes de 3 :
 
 Puis on met en commun, chaque groupe propose son algorithme, on essaie de formaliser un algorithme commun et d'identifier les instructions nécessaires : Position crepe plus grosse, Retourner, Tas trié, etc. (10')
 
-## Activité branchée (50')
+## Activité branchée (40')
 
 On a comme instructions à dispostion :
 
 * `taille(n)` # Taille de la n-ème crêpe en partant du haut
 * `retourner(n)` # Retourner sous la n-ème crêpe en partant du haut
-
-et on aurait besoin de `tasTrié()` et `plusGrande(nombreCrepes)`.
-
-
-### Introduction au return (10')
-
-Par groupes de 2-3, la moitié des groupes programme la fonction `tasTrié()` et l'autre moitié `plusGrande(nombreCrepes)`
+* `plusGrande(n)` # Indique la position de la plus grande crêpe parmi les n premières
+* `tasTrié()` # Indique si le tas est trié (True) ou pas (False).
 
 
-### Implémentation de fonction (15')
+### Découverte de l'environnement (15')
 
-`tasTrié()` :
-
-1) Commencer par afficher la taille de toutes les crepes avec une boucle for.
-2) *Si possible faire trouver par élèves :* Au début, on part du principe que la pile est triée et on change si on voit une crêpe pas triée. Créer variable booléenne qui est True si la pile est triée et False sinon. 
-3) Qu'est-ce qu'on va vérifier à chaque itération de la boucle ? *Attention à réduire le range à N-1*
-4) On retourne la variable booléenne
-
-
-`plusGrande(nombreCrepes)` :
-
-1) Commencer par afficher la taille de toutes les crepes avec une boucle for.
-2) On va d'abord chercher la plus grande de toute la liste. *Si possible faire trouver par élèves :* variable qui stocke la position de la plus grande vue jusqu'ici
-3) Qu'est-ce qu'on va vérifier à chaque itération de la boucle ?
-4) On retourne la variable booléenne
-5) On modifie la fonction pour ajouter un paramètre `nombreCrepes` qui spécifie parmi combien de crêpes on cherche la plus grande,
+1) Afficher la taille de la 3ème crêpe en partant du haut (attention, on commence à compter à 0).
+2) Retourner sous la 4ème crêpe en partant du haut (attention, on commence à compter à 0).
+3) Afficher la taille de toutes les crêpes avec une boucle for.
+4) Afficher la position de la plus grande crêpe parmi les 3 premières crêpes.
+5) Afficher si le tas est trié.
 
 
-### Implémentation de l'algorithme (25')
+### Implémentation de l'algorithme (15')
 
-Les élèves forment des binomes complémentaires.
-
-* Mise en commun et explication des fonctions (10')
-* Implémentation de l'algorithme (10')
+Implémentation de l'algorithme de tri.
 
 ## Conclusion (10')
 
@@ -72,24 +54,26 @@ Les élèves forment des binomes complémentaires.
 # Canevas élève
 
 ```python
-# Import librairie
-from crepes import init, taille, retourner
+#### Import librairie
+from crepes import *
 N = 7
 init(N)
 
 
-# Instructions disponibles :
-taille(3) # Taille de la 3e crêpe en partant du haut
-retourner(3) # Retourner sous la 3e crêpe en partant du haut
+#### Découverte de l'environnement
+# 1) Afficher la taille de la 3ème crêpe en partant du haut (attention, on commence à compter à 0).
+
+# 2) Retourner sous la 4ème crêpe en partant du haut (attention, on commence à compter à 0).
+
+# 3) Afficher la taille de toutes les crêpes avec une boucle for.
+
+# 4) Afficher la position de la plus grande crêpe parmi les 3 premières crêpes.
+
+# 5) Afficher si le tas est trié.
 
 
 
-# Fonctions nécessaires
-
-
-    
-# Solution algorithme
-
+#### Implémentation de l'algorithme de tri
 
 
 ```

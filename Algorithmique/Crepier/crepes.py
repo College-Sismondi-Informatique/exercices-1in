@@ -147,6 +147,20 @@ def fin():
 
     # Done! Time to quit
     pygame.quit()
+    
+def tasTrié():
+    estTrié = True
+    for i in range(nCrepes-1):
+        if taille(i)> taille(i+1):
+            estTrié = False
+    return estTrié
+
+def plusGrande(nombreCrepes):
+    idx = 0
+    for i in range(nombreCrepes):
+        if taille(i) > taille(idx):
+            idx = i            
+    return idx
 
 if (__name__ == "__main__"):
     
