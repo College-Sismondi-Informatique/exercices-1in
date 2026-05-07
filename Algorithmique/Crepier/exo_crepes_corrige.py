@@ -22,7 +22,7 @@ print(plusGrande(3))
 print(tasTrié())
   
 
-# Solution algorithme
+#### Solution algorithme
 i = N
 while tasTrié() == False:
     
