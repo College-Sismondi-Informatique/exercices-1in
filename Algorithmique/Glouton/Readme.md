@@ -16,8 +16,8 @@
 * Démonstration solution non optimale avec exemple monnaies 5'
 * Problème du sac à dos : explication et recherche méthode gloutonne 10'
 * Exercice d'application de l'algorithme glouton 10'
- 15'
-## Voyageur commerce 10'
+ 
+## Voyageur commerce 15'
 * Algorithme glouton et force brute 10'
 * Complexité et solutions 5'
 * Si plus de temps, expérimentation avec planche 10'
