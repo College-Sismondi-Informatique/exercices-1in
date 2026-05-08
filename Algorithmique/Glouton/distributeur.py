@@ -7,4 +7,9 @@ iterBillets = iter(billets)
 nombre_billets = len(billets)
 
 def billet_suivant():
-    return next(iterBillets)
+    global iterBillets
+    try:
+        return next(iterBillets)
+    except StopIteration:
+        iterBillets = iter(billets)
+        return next(iterBillets)
