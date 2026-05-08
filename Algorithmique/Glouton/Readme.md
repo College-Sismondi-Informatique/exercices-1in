@@ -9,7 +9,7 @@
 * Explication du problème 5'
 * Réflexion en petits groupes 5'
 * Formalisation en commun de l'algorithme de résolution 5'
-* Programmation sur [Notebook](https://notebook.basthon.fr/?extensions=sequenced%2Clinenumbers&kernel=python&aux=https%3A%2F%2Fraw.githubusercontent.com%2FCollege-Sismondi-Informatique%2Fexercices-1in%2Frefs%2Fheads%2Fmain%2FAlgorithmique%2FGlouton%2Fdistributeur.py&from=https://raw.githubusercontent.com/College-Sismondi-Informatique/exercices-1in/refs/heads/main/Algorithmique/Glouton/distributeur_monnaie.ipynb) 15'
+* Programmation sur [Notebook](https://notebook.basthon.fr/?extensions=sequenced%2Cromd%2Clinenumbers&kernel=python&aux=https%3A%2F%2Fraw.githubusercontent.com%2FCollege-Sismondi-Informatique%2Fexercices-1in%2Frefs%2Fheads%2Fmain%2FAlgorithmique%2FGlouton%2Fdistributeur.py&from=https://raw.githubusercontent.com/College-Sismondi-Informatique/exercices-1in/refs/heads/main/Algorithmique/Glouton/distributeur_monnaie.ipynb) 15'
 
 ## Algorithme gloutons 30'
 * Explication générale de la famille des algorithmes gloutons 5'
