@@ -23,15 +23,16 @@ print(tasTrié())
   
 
 #### Solution algorithme
+
 i = N
 while tasTrié() == False:
     
-    # On retourne sous la plus grande non triée
-    tasDeCrepes = retourner(plusGrande(i))
+    tasDeCrepes = retourner(plusGrande(i))    
     
-    # On retourne sous la 1ère non triée 
+    if bruleeEnBas(0):
+        retourner(0)
+    
     tasDeCrepes = retourner(i-1)
     
     i = i - 1
-
 

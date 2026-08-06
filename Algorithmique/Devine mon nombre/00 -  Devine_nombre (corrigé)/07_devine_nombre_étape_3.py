@@ -1,8 +1,8 @@
 from random import randint
 
-proposition = 0
-minimum = 0
-maximum = 10000000000000000000000000000000000000000000000000
+proposition = -1
+minimum = 1
+maximum = 128
 tentatives = 0
 
 nombre_mystere = randint(1, maximum)

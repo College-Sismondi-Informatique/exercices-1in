@@ -49,13 +49,20 @@ def generate_crepes(n=7):
     for i in range(n):
         newNumber = 0
         while (newNumber in tas) or (newNumber ==0):
-            newNumber = random.randrange(n)+1
+            newNumber = (random.randrange(n)+1)
         tas.append(newNumber)
-        
+    
+    if burnedMode:
+        for i in range(n):
+            tas[i] *= (random.randrange(2)*2-1)
+            
     return tas
 
+def bruleeEnBas(n):
+    return tas[n] > 0
+
 def taille(n):
-    return tas[n]
+    return abs(tas[n])
 
 def retourner(n):
     global tas
@@ -164,7 +171,7 @@ def plusGrande(nombreCrepes):
 
 if (__name__ == "__main__"):
     
-    tasDeCrepes = init(7, True)
+    tasDeCrepes = init(7, False)
     while True:
         pos = souris()
         if pos:
