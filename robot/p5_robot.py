@@ -28,6 +28,7 @@ class GameStatus(Enum):
     RUNNING = 1
     COLLISION = 2
     WIN = 3
+    OUTSIDE = 4
 
 def initExoRobot(_nbCasesX, _nbCasesY, _rocksPos, _flagPos, _robotPos):
     global gameStatus, exoName, nbCasesX, nbCasesY, cell_size, rocksPos, flagPos, robotPos
@@ -107,17 +108,25 @@ def draw():
         p5.stroke(0)
         p5.fill(255, 0, 0)
         # bandeau au centre
-        p5.rect(0, nbCasesY * cell_size // 3, nbCasesX * cell_size, cell_size * 1.2)
+        p5.rect(0, nbCasesY * cell_size // 2.5, nbCasesX * cell_size, cell_size * 1)
         p5.fill(255)
         p5.textSize(emoji_size)
-        p5.text("💥 Collision !", nbCasesX * cell_size // 10, nbCasesY * cell_size // 2 + emoji_size // 2)
+        p5.text("💥 Collision !", nbCasesX * cell_size // 6, nbCasesY * cell_size // 2 + emoji_size // 2)
     elif gameStatus == GameStatus.WIN:
         p5.stroke(0)
         p5.fill(0, 200, 0)
-        p5.rect(0, nbCasesY * cell_size // 3, nbCasesX * cell_size, cell_size * 1.2)
+        p5.rect(0, nbCasesY * cell_size // 2.5, nbCasesX * cell_size, cell_size * 1)
         p5.fill(255)
         p5.textSize(emoji_size)
-        p5.text("🏆 Victoire !", nbCasesX * cell_size // 10, nbCasesY * cell_size // 2 + emoji_size // 2)
+        p5.text("🏆 Victoire !", nbCasesX * cell_size // 6, nbCasesY * cell_size // 2 + emoji_size // 2)
+    elif gameStatus == GameStatus.OUTSIDE:
+        p5.stroke(0)
+        p5.fill(255, 188, 59)
+        # bandeau au centre
+        p5.rect(0, nbCasesY * cell_size // 2.5, nbCasesX * cell_size, cell_size * 1)
+        p5.fill(255)
+        p5.textSize(emoji_size)
+        p5.text("🪂 Revieeens !", nbCasesX * cell_size // 6, nbCasesY * cell_size // 2 + emoji_size // 2)
 
     # Gestion des événements / animation
     if current_event is not None:
@@ -126,12 +135,15 @@ def draw():
             y_robot += vy
             anim_i += 1
         else:
+            print(robotGridX, robotGridY, nbCasesX, nbCasesY)
             # Fin du mouvement d'une case
             anim_i = 0
             current_event = None
             # Vérification collision / victoire
-            if [robotGridY, robotGridX] in rocksPos:
+            if [robotGridY, robotGridX] in rocksPos :
                 gameStatus = GameStatus.COLLISION
+            if (robotGridX < 0 or robotGridX >= nbCasesX or robotGridY < 0 or robotGridY >= nbCasesY) :
+                gameStatus = GameStatus.OUTSIDE
             if robotGridX == flagPos[1] and robotGridY == flagPos[0]:
                 gameStatus = GameStatus.WIN
     elif event_index < len(events):
@@ -196,7 +208,11 @@ def murBas():
     return False
 
 
+# Exercices prêts à être utilisés
+def exoRobot1():
+    initExoRobot( 7, 4, [[3,4,5,6],[1,5,6],[1,2,3],[1,2,3,4,5]], [3,0], [3,6])
+
 # --- Exemple d'utilisation ---
 if __name__ == "__main__":
-    initExoRobot( 7, 4, [[3,4,5,6],[1,5,6],[1,2,3],[1,2,3,4,5]], [3,0], [3,6])
+    exoRobot1()
 
