@@ -33,7 +33,7 @@ class GameStatus(Enum):
 def initExoRobot(_nbCasesX, _nbCasesY, _rocksPos, _flagPos, _robotPos):
     global gameStatus, exoName, nbCasesX, nbCasesY, cell_size, rocksPos, flagPos, robotPos
     global robotGridX, robotGridY, x_robot, y_robot
-    global current_event, events, event_index, anim_i, vx, vy
+    global current_event, events, event_index, anim_i, vx, vy, speed
 
     gameStatus = GameStatus.RUNNING
     nbCasesX = _nbCasesX
@@ -64,6 +64,7 @@ def initExoRobot(_nbCasesX, _nbCasesY, _rocksPos, _flagPos, _robotPos):
     anim_i = 0
     vx = 0
     vy = 0
+    speed = 1.5
     
     p5.run()
 
@@ -131,11 +132,11 @@ def draw():
     # Gestion des événements / animation
     if current_event is not None:
         if anim_i < cell_size:
-            x_robot += vx
-            y_robot += vy
-            anim_i += 1
+            step = min(speed, cell_size - anim_i)
+            x_robot += vx * step
+            y_robot += vy * step
+            anim_i += step
         else:
-            print(robotGridX, robotGridY, nbCasesX, nbCasesY)
             # Fin du mouvement d'une case
             anim_i = 0
             current_event = None
@@ -182,6 +183,10 @@ def haut(n=1):
 def bas(n=1):
     global events
     events.extend(["bas"] * n)
+
+def vitesse(n):
+    global speed
+    speed = n
 
 def murDroite():
     for rock in rocksPos:
