@@ -74,8 +74,8 @@
 </tr>
 <tr style="height: 60px;">
     <td style="height: 60px;">&nbsp;Les boucles <strong>while</strong> </td>
-    <td style="height: 60px; text-align: center;"><a href="https://notebook.basthon.fr/?extensions=sequenced%2Cromd%2Clinenumbers&amp;kernel=python3-legacy&amp;from=https://raw.githubusercontent.com/College-Sismondi-Informatique/exercices-1in/refs/heads/main/Notebooks/07_Boucle_while_partie1.ipynb&amp;aux=https://raw.githubusercontent.com/College-Sismondi-Informatique/exercices-1in/refs/heads/main/Notebooks/_validation.py" target="_blank" rel="noopener">Leçon n°6a</a></td>
-    <td style="height: 60px; text-align: center;"><a href="https://notebook.basthon.fr/?extensions=romd%2Clinenumbers&amp;kernel=python3-legacy&from=https://raw.githubusercontent.com/College-Sismondi-Informatique/exercices-1in/refs/heads/main/Notebooks/07_Boucle_while_partie1_correction.ipynb&aux=https://raw.githubusercontent.com/College-Sismondi-Informatique/exercices-1in/refs/heads/main/Notebooks/_validation.py" target="_blank" rel="noopener">Leçon n°6a - corrigé</a></td>
+    <td style="height: 60px; text-align: center;"><a href="https://notebook.basthon.fr/?extensions=sequenced%2Cromd%2Clinenumbers&amp;kernel=python3-legacy&amp;from=https://raw.githubusercontent.com/College-Sismondi-Informatique/exercices-1in/refs/heads/main/Notebooks/07_Boucle_while_partie1.ipynb&amp;aux=https://raw.githubusercontent.com/College-Sismondi-Informatique/exercices-1in/refs/heads/main/Notebooks/_validation.py" target="_blank" rel="noopener">Leçon n°7a</a></td>
+    <td style="height: 60px; text-align: center;"><a href="https://notebook.basthon.fr/?extensions=romd%2Clinenumbers&amp;kernel=python3-legacy&from=https://raw.githubusercontent.com/College-Sismondi-Informatique/exercices-1in/refs/heads/main/Notebooks/07_Boucle_while_partie1_correction.ipynb&aux=https://raw.githubusercontent.com/College-Sismondi-Informatique/exercices-1in/refs/heads/main/Notebooks/_validation.py" target="_blank" rel="noopener">Leçon n°7a - corrigé</a></td>
 </tr>
 </tbody>
 </table>
