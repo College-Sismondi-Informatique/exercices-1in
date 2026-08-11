@@ -1,6 +1,10 @@
 import p5
 import time
 from enum import Enum
+try:
+    import js
+except Exception:
+    pass
 
 # --- Globals ---
 gameStatus = None
@@ -120,6 +124,8 @@ def draw():
         p5.fill(255)
         p5.textSize(emoji_size)
         p5.text("🏆 Victoire !", nbCasesX * cell_size // 6, nbCasesY * cell_size // 2 + emoji_size // 2)
+        if 'js' in globals() :
+            js.basthon.breakpointMoveOn()
     elif gameStatus == GameStatus.OUTSIDE:
         p5.stroke(0)
         p5.fill(255, 188, 59)
