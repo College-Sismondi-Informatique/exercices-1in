@@ -75,38 +75,130 @@ def initExoRobot(_nbCasesX, _nbCasesY, _rocksPos, _flagPos, _robotPos):
 def setup():
     p5.createCanvas(cell_size * nbCasesX, cell_size * nbCasesY)
 
+def _prng(row, col, n, max_val=1.0):
+    """Génère un float pseudo-aléatoire stable basé sur les coordonnées de la case."""
+    h = hash((row, col, n))
+    return (abs(h) % 10000) / 10000.0 * max_val
+
+def _draw_grass_cell(x, y, size, row, col):
+    p5.noStroke()
+    # Fond vert herbe éclairci
+    p5.fill(151, 230, 83)
+    p5.rect(x, y, size, size)
+    # Taches vert foncé
+    for k in range(0):
+        px = x + _prng(row, col, k * 2, size)
+        py = y + _prng(row, col, k * 2 + 1, size)
+        p5.fill(160, 200, 90, 220)
+        el_w = _prng(row, col, k * 2 + 100, size * 0.4) + size * 0.1
+        el_h = _prng(row, col, k * 2 + 101, size * 0.4) + size * 0.1
+        p5.ellipse(px, py, el_w, el_h)
+    # Taches vert clair
+    for k in range(0):
+        px = x + _prng(row, col, k * 2 + 200, size)
+        py = y + _prng(row, col, k * 2 + 201, size)
+        p5.fill(180, 240, 120, 220)
+        el_w = _prng(row, col, k * 2 + 202, size * 0.3) + size * 0.05
+        el_h = _prng(row, col, k * 2 + 203, size * 0.3) + size * 0.05
+        p5.ellipse(px, py, el_w, el_h)
+    # Trait d'herbe
+    p5.stroke(110, 160, 50)
+    p5.strokeWeight(2)
+    for k in range(2):
+        bx = x + _prng(row, col, k * 3 + 300, size)
+        by = y + _prng(row, col, k * 3 + 301, size)
+        ex = bx + _prng(row, col, k * 3 + 302, size * 0.3) - size * 0.15
+        ey = by + _prng(row, col, k * 3 + 303, size * 0.3) - size * 0.15
+        p5.line(bx, by, ex, ey)
+    p5.noStroke()
+
+def _draw_dirt_cell(x, y, size, row, col):
+    p5.noStroke()
+    # Fond ocre terreux
+    p5.fill(170, 130, 85)
+    p5.rect(x, y, size, size)
+    # Petit labour : traits brisés courts
+    p5.strokeWeight(1)
+    for k in range(2):
+        sx = x + _prng(row, col, k * 4, size)
+        sy = y + _prng(row, col, k * 4 + 1, size)
+        angle = _prng(row, col, k * 4 + 2, 3.14)
+        length = _prng(row, col, k * 4 + 3, size * 0.25) + size * 0.1
+        ex = sx + length * p5.cos(angle)
+        ey = sy + length * p5.sin(angle)
+        p5.stroke(130, 95, 55, 220)
+        p5.line(sx, sy, ex, ey)
+    # Gravillons / cailloux gris foncés
+    p5.noStroke()
+    for k in range(5):
+        px = x + _prng(row, col, k * 2 + 400, size)
+        py = y + _prng(row, col, k * 2 + 401, size)
+        p5.fill(110, 95, 80, 220)
+        p5.ellipse(px, py, size * 0.1, size * 0.08)
+    # Poussière sable clair
+    for k in range(4):
+        px = x + _prng(row, col, k * 2 + 500, size)
+        py = y + _prng(row, col, k * 2 + 501, size)
+        p5.fill(200, 175, 140, 220)
+        p5.ellipse(px, py, size * 0.08, size * 0.08)
+    p5.noStroke()
+
 def draw_grid():
-    p5.background(250)
-    p5.stroke(0)
+    for j in range(nbCasesY):
+        for i in range(nbCasesX):
+            x = i * cell_size
+            y = j * cell_size
+            if (i + j) % 2 == 0:
+                _draw_grass_cell(x, y, cell_size, j, i)
+            else:
+                _draw_dirt_cell(x, y, cell_size, j, i)
+
+    # Grille fine
+    p5.strokeWeight(1)
+    p5.stroke(0, 30)
     for i in range(nbCasesX + 1):
         p5.line(i * cell_size, 0, i * cell_size, cell_size * nbCasesY)
     for j in range(nbCasesY + 1):
         p5.line(0, j * cell_size, cell_size * nbCasesX, j * cell_size)
+    p5.noStroke()
 
 def draw():
     global x_robot, y_robot, vx, vy, anim_i, current_event, event_index, robotGridX, robotGridY, gameStatus
 
     draw_grid()
 
+    # Voile léger sur le fond pour faire ressortir les emojis
+    p5.noStroke()
+    p5.fill(255, 255, 255, 40)
+    p5.rect(0, 0, cell_size * nbCasesX, cell_size * nbCasesY)
+
     emoji_size = int(cell_size / 1.5)
     p5.textSize(emoji_size)
     offset_x = cell_size // 10
     offset_y = int(cell_size / 1.5)
+
+    # Réinitialise l'état graphique pour les emojis
+    p5.noStroke()
+    p5.fill(0)
+
+    def _draw_emoji(txt, cx, cy):
+        p5.fill(0)
+        p5.text(txt, cx, cy)
 
     # Dessine les rochers
     for rock in rocksPos:
         row, col = rock
         rx = col * cell_size + offset_x
         ry = row * cell_size + offset_y
-        p5.text("🪨", rx, ry)
+        _draw_emoji("🪨", rx, ry)
 
     # Dessine le drapeau
     fx = flagPos[0] * cell_size + offset_x
     fy = flagPos[1] * cell_size + offset_y
-    p5.text("🚩", fx, fy)
+    _draw_emoji("🚩", fx, fy)
 
     # Dessine le robot
-    p5.text("🤖", x_robot, y_robot)
+    _draw_emoji("🚴🏼", x_robot, y_robot)
 
     # Affichage du statut (collision / victoire)
     if gameStatus == GameStatus.COLLISION:
