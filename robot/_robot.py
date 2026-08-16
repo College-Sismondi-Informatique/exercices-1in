@@ -51,8 +51,8 @@ def initExoRobot(_nbCasesX, _nbCasesY, _rocksPos, _flagPos, _robotPos):
 
     flagPos = list(_flagPos)      # [row, col]
     robotPos = list(_robotPos)    # [row, col]
-    robotGridX = robotPos[1]      # col
-    robotGridY = robotPos[0]      # row
+    robotGridX = robotPos[0]      # col
+    robotGridY = robotPos[1]      # row
 
     # Taille de case auto (max 80 px)
     cell_size = min(800 // nbCasesX, 600 // nbCasesY, 80)
@@ -101,8 +101,8 @@ def draw():
         p5.text("🪨", rx, ry)
 
     # Dessine le drapeau
-    fx = flagPos[1] * cell_size + offset_x
-    fy = flagPos[0] * cell_size + offset_y
+    fx = flagPos[0] * cell_size + offset_x
+    fy = flagPos[1] * cell_size + offset_y
     p5.text("🚩", fx, fy)
 
     # Dessine le robot
@@ -151,7 +151,7 @@ def draw():
                 gameStatus = GameStatus.COLLISION
             if (robotGridX < 0 or robotGridX >= nbCasesX or robotGridY < 0 or robotGridY >= nbCasesY) :
                 gameStatus = GameStatus.OUTSIDE
-            if robotGridX == flagPos[1] and robotGridY == flagPos[0]:
+            if robotGridX == flagPos[0] and robotGridY == flagPos[1]:
                 gameStatus = GameStatus.WIN
     elif event_index < len(events):
         if gameStatus == GameStatus.RUNNING:
@@ -219,11 +219,50 @@ def murBas():
     return False
 
 
-# Exercices prêts à être utilisés
-def exoRobot1():
-    initExoRobot( 7, 4, [[3,4,5,6],[1,5,6],[1,2,3],[1,2,3,4,5]], [3,0], [3,6])
+#### Exercices prêts à être utilisés
+
+# Lecon 1
+def exoRobot1_1():
+    initExoRobot( 3, 3, [[],[1],[1]], [0,2], [2,1])
+    
+def exoRobot1_2():
+    initExoRobot(3, 7, # taille de la grille
+             # positions des obstacles
+             [[0],[0,2],[0,2],[0,2],[0,2],[2],[0,1,2]],
+             [0,5], # position du drapeau
+             [2,0]  # position du robot au départ
+             )
+    
+def exoRobot1_3():
+    initExoRobot( 7, 4, [[3,4,5,6],[1,5,6],[1,2,3],[1,2,3,4,5]], [0,3], [6,3])
+
+    
+# Lecon 2
+def exoRobot2_1():
+    initExoRobot(7, 6, # taille de la grille
+             # positions des obstacles
+             [[],[1,2,3,4,5,6],[],[2,3,4,5],[2],[2]],
+             [2,0], # position du drapeau
+             [4,4]  # position du robot au départ
+             )
+    
+def exoRobot2_2():
+    initExoRobot(7, 7, # taille de la grille
+             # positions des obstacles
+             [[2],[0,3],[1,4],[2,5],[3,6],[4],[5]],
+             [0,0], # position du drapeau
+             [6,6]  # position du robot au départ
+             )
+    
+def exoRobot2_3():
+    initExoRobot(7, 7, # taille de la grille
+             # positions des obstacles
+             [[0],[0,2,3,4,5,6],[0,2,6],[2,4,6],[1,4],[1,3,4,5],[3,5]],
+             [2,0], # position du drapeau
+             [6,6]  # position du robot au départ
+             )
 
 # --- Exemple d'utilisation ---
 if __name__ == "__main__":
-    exoRobot1()
+    exoRobot2_3()
 
