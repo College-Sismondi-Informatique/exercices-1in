@@ -222,6 +222,9 @@ def murBas():
 #### Exercices prêts à être utilisés
 
 # Lecon 1
+def exoRobot1_0():
+    initExoRobot( 3, 2, [[]], [0,0], [2,0])
+    
 def exoRobot1_1():
     initExoRobot( 3, 3, [[],[1],[1]], [0,2], [2,1])
     
