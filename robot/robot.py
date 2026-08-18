@@ -198,7 +198,7 @@ def draw():
     _draw_emoji("🚩", fx, fy)
 
     # Dessine le robot
-    _draw_emoji("🚴🏼", x_robot, y_robot)
+    _draw_emoji("🤖", x_robot, y_robot)
 
     # Affichage du statut (collision / victoire)
     if gameStatus == GameStatus.COLLISION:
