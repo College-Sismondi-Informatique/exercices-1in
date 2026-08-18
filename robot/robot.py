@@ -27,6 +27,11 @@ current_event = None
 events = []
 event_index = 0
 
+canvas_w = 0
+canvas_h = 0
+grid_offset_x = 0
+msg_zone_height = 0
+
 
 class GameStatus(Enum):
     RUNNING = 1
@@ -73,7 +78,15 @@ def initExoRobot(_nbCasesX, _nbCasesY, _rocksPos, _flagPos, _robotPos):
     p5.run()
 
 def setup():
-    p5.createCanvas(cell_size * nbCasesX, cell_size * nbCasesY)
+    global canvas_w, canvas_h, grid_offset_x, msg_zone_height
+    emoji_size = cell_size / 1.5
+    # Largeur minimum pour que les messages ne soient pas tronqués
+    min_canvas_width = int(14 * emoji_size * 0.6) + 20
+    canvas_w = max(cell_size * nbCasesX, min_canvas_width)
+    msg_zone_height = int(cell_size * 1.5)
+    canvas_h = cell_size * nbCasesY + msg_zone_height
+    grid_offset_x = (canvas_w - cell_size * nbCasesX) // 2
+    p5.createCanvas(canvas_w, canvas_h)
 
 def _prng(row, col, n, max_val=1.0):
     """Génère un float pseudo-aléatoire stable basé sur les coordonnées de la case."""
@@ -165,6 +178,9 @@ def draw_grid():
 def draw():
     global x_robot, y_robot, vx, vy, anim_i, current_event, event_index, robotGridX, robotGridY, gameStatus
 
+    p5.push()
+    p5.translate(grid_offset_x, 0)
+
     draw_grid()
 
     # Voile léger sur le fond pour faire ressortir les emojis
@@ -200,32 +216,25 @@ def draw():
     # Dessine le robot
     _draw_emoji("🤖", x_robot, y_robot)
 
-    # Affichage du statut (collision / victoire)
-    if gameStatus == GameStatus.COLLISION:
-        p5.stroke(0)
-        p5.fill(255, 0, 0)
-        # bandeau au centre
-        p5.rect(0, nbCasesY * cell_size // 2.5, nbCasesX * cell_size, cell_size * 1)
-        p5.fill(255)
+    p5.pop()
+
+    # Affichage du statut (collision / victoire / hors-plateau)
+    if gameStatus in (GameStatus.COLLISION, GameStatus.WIN, GameStatus.OUTSIDE):
+        msg_y = nbCasesY * cell_size + msg_zone_height // 2
+        p5.textAlign(p5.CENTER, p5.CENTER)
         p5.textSize(emoji_size)
-        p5.text("💥 Collision !", nbCasesX * cell_size // 6, nbCasesY * cell_size // 2 + emoji_size // 2)
-    elif gameStatus == GameStatus.WIN:
-        p5.stroke(0)
-        p5.fill(0, 200, 0)
-        p5.rect(0, nbCasesY * cell_size // 2.5, nbCasesX * cell_size, cell_size * 1)
-        p5.fill(255)
-        p5.textSize(emoji_size)
-        p5.text("🏆 Victoire !", nbCasesX * cell_size // 6, nbCasesY * cell_size // 2 + emoji_size // 2)
-        if 'js' in globals() :
-            js.basthon.breakpointMoveOn()
-    elif gameStatus == GameStatus.OUTSIDE:
-        p5.stroke(0)
-        p5.fill(255, 188, 59)
-        # bandeau au centre
-        p5.rect(0, nbCasesY * cell_size // 2.5, nbCasesX * cell_size, cell_size * 1)
-        p5.fill(255)
-        p5.textSize(emoji_size)
-        p5.text("🪂 Revieeens !", nbCasesX * cell_size // 6, nbCasesY * cell_size // 2 + emoji_size // 2)
+        if gameStatus == GameStatus.COLLISION:
+            p5.fill(255, 0, 0)
+            p5.text("💥 Collision !", canvas_w // 2, msg_y)
+        elif gameStatus == GameStatus.WIN:
+            p5.fill(0, 200, 0)
+            p5.text("🏆 Victoire !", canvas_w // 2, msg_y)
+            if 'js' in globals():
+                js.basthon.breakpointMoveOn()
+        elif gameStatus == GameStatus.OUTSIDE:
+            p5.fill(255, 188, 59)
+            p5.text("🪂 Revieeens !", canvas_w // 2, msg_y)
+        p5.textAlign(p5.LEFT, p5.BASELINE)
 
     # Gestion des événements / animation
     if current_event is not None:
