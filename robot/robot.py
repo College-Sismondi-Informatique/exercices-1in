@@ -31,6 +31,7 @@ canvas_w = 0
 canvas_h = 0
 grid_offset_x = 0
 msg_zone_height = 0
+_stop_draw = False
 
 
 class GameStatus(Enum):
@@ -43,6 +44,7 @@ def initExoRobot(_nbCasesX, _nbCasesY, _rocksPos, _flagPos, _robotPos):
     global gameStatus, exoName, nbCasesX, nbCasesY, cell_size, rocksPos, flagPos, robotPos
     global robotGridX, robotGridY, x_robot, y_robot
     global current_event, events, event_index, anim_i, vx, vy, speed
+    global _stop_draw
 
     gameStatus = GameStatus.RUNNING
     nbCasesX = _nbCasesX
@@ -74,7 +76,7 @@ def initExoRobot(_nbCasesX, _nbCasesY, _rocksPos, _flagPos, _robotPos):
     vx = 0
     vy = 0
     speed = 1.5
-    
+    _stop_draw = False
     p5.run()
 
 def setup():
@@ -87,6 +89,15 @@ def setup():
     canvas_h = cell_size * nbCasesY + msg_zone_height
     grid_offset_x = (canvas_w - cell_size * nbCasesX) // 2
     p5.createCanvas(canvas_w, canvas_h)
+
+def _end_game():
+    global _stop_draw, events
+    _stop_draw = True
+    events.clear()
+    try:
+        p5.noLoop()
+    except Exception:
+        pass
 
 def _prng(row, col, n, max_val=1.0):
     """Génère un float pseudo-aléatoire stable basé sur les coordonnées de la case."""
@@ -177,6 +188,8 @@ def draw_grid():
 
 def draw():
     global x_robot, y_robot, vx, vy, anim_i, current_event, event_index, robotGridX, robotGridY, gameStatus
+    if _stop_draw:
+        return
 
     p5.push()
     p5.translate(grid_offset_x, 0)
@@ -218,24 +231,6 @@ def draw():
 
     p5.pop()
 
-    # Affichage du statut (collision / victoire / hors-plateau)
-    if gameStatus in (GameStatus.COLLISION, GameStatus.WIN, GameStatus.OUTSIDE):
-        msg_y = nbCasesY * cell_size + msg_zone_height // 2
-        p5.textAlign(p5.CENTER, p5.CENTER)
-        p5.textSize(emoji_size)
-        if gameStatus == GameStatus.COLLISION:
-            p5.fill(255, 0, 0)
-            p5.text("💥 Collision !", canvas_w // 2, msg_y)
-        elif gameStatus == GameStatus.WIN:
-            p5.fill(0, 200, 0)
-            p5.text("🏆 Victoire !", canvas_w // 2, msg_y)
-            if 'js' in globals():
-                js.basthon.breakpointMoveOn()
-        elif gameStatus == GameStatus.OUTSIDE:
-            p5.fill(255, 188, 59)
-            p5.text("🪂 Revieeens !", canvas_w // 2, msg_y)
-        p5.textAlign(p5.LEFT, p5.BASELINE)
-
     # Gestion des événements / animation
     if current_event is not None:
         if anim_i < cell_size:
@@ -274,6 +269,28 @@ def draw():
                 robotGridY -= 1
                 vx = 0
                 vy = -1
+
+    # Affichage du statut (collision / victoire / hors-plateau)
+    if gameStatus in (GameStatus.COLLISION, GameStatus.WIN, GameStatus.OUTSIDE):
+        msg_y = nbCasesY * cell_size + msg_zone_height // 2
+        p5.textAlign(p5.CENTER, p5.CENTER)
+        p5.textSize(emoji_size)
+        if gameStatus == GameStatus.COLLISION:
+            p5.fill(255, 0, 0)
+            p5.text("💥 Collision !", canvas_w // 2, msg_y)
+        elif gameStatus == GameStatus.WIN:
+            p5.fill(0, 200, 0)
+            p5.text("🏆 Victoire !", canvas_w // 2, msg_y)
+            if 'js' in globals():
+                js.basthon.breakpointMoveOn()
+        elif gameStatus == GameStatus.OUTSIDE:
+            p5.fill(255, 188, 59)
+            p5.text("🪂 Revieeens !", canvas_w // 2, msg_y)
+        p5.textAlign(p5.LEFT, p5.BASELINE)
+
+    # Si la partie est finie et plus rien ne bouge, on arrête proprement
+    if gameStatus != GameStatus.RUNNING and current_event is None:
+        _end_game()
 
 def droite(n=1):
     global events
