@@ -27,7 +27,7 @@
 </tr>
 <tr style="height: 60.6667px;">
 <td style="height: 60.6667px;"> Complément <strong>print </strong><br> Nombre entier - nombre réel - ASCII - UTF-8</td>
-<td style="height: 60.6667px; text-align: center;"><a href="https://notebook.basthon.fr/?extensions=sequenced%2Cromd%2Clinenumbers&amp;kernel=python3-legacy&amp;from=https://raw.githubusercontent.com/College-Sismondi-Informatique/exercices-1in/refs/heads/main/Notebooks/01b_Complement_Print.ipynb" target="_blank" rel="noopener">Leçon n°1b</a></td>
+<td style="height: 60.6667px; text-align: center;"><a href="https://notebook.basthon.fr/?extensions=sequenced,romd,linenumbers&kernel=python3-legacy&from=https://raw.githubusercontent.com/College-Sismondi-Informatique/exercices-1in/refs/heads/main/Notebooks/01b_Complement_Print.ipynb&module=https://raw.githubusercontent.com/College-Sismondi-Informatique/exercices-1in/refs/heads/main/robot/robot.py&aux=https://raw.githubusercontent.com/College-Sismondi-Informatique/exercices-1in/refs/heads/main/Notebooks/_validation.py" target="_blank" rel="noopener">Leçon n°1b</a></td>
 <td style="height: 60.6667px; text-align: center;"><a href="https://notebook.basthon.fr/?extensions=sequenced%2Cromd%2Clinenumbers&amp;kernel=python3-legacy&amp;from=https://raw.githubusercontent.com/College-Sismondi-Informatique/exercices-1in/refs/heads/main/Notebooks/01b_Complement_Print_corrige.ipynb" target="_blank" rel="noopener">Leçon n°1b - corrigé</a></td>
 </tr>
 <tr style="height: 67.1167px;">
