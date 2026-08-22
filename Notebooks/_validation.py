@@ -9,10 +9,80 @@ from basthon.autoeval import (
 from typing import Any
 import time
 import sys
-from js import document, Reflect, Jupyter
+import string
+import json
+from io import StringIO
+from js import document, Jupyter, JSON,basthon
 
-codes_dict = {}
-lastCode = ''
+
+class bcolors:
+    HEADER = '\033[95m'
+    OKBLUE = '\033[94m'
+    OKCYAN = '\033[96m'
+    OKGREEN = '\033[92m'
+    WARNING = '\033[93m'
+    FAIL = '\033[91m'
+    ENDC = '\033[0m'
+    BOLD = '\033[1m'
+    UNDERLINE = '\033[4m'
+
+messageBravo = bcolors.OKGREEN + bcolors.BOLD + "Bravo !" + bcolors.ENDC
+messageFail = bcolors.FAIL + bcolors.BOLD + "Essaie encore" + bcolors.ENDC  
+    
+def compare(s1, s2):
+     remove =  string.whitespace #string.punctuation +
+     return s1.translate(s1.maketrans('', '', remove)) == s2.translate(s2.maketrans('', '', remove))
+
+
+    
+def print_persistant(*args, **kwargs):
+    global previous_exec_count, compteur, historique_prints, last_line
+    
+    # Exit if not requested in this cell
+    current_cell = Jupyter.notebook.get_cell(next(i for i, cellule in enumerate(Jupyter.notebook.get_cells())
+               if cellule.cell_type == "code" and cellule.input_prompt_number == "*"))
+    metadata = json.loads(JSON.stringify(current_cell.metadata))    
+    if 'print_answer' not in metadata : 
+        return _print_original(*args, **kwargs)
+
+    correctStr = metadata['print_answer']
+    
+    # Identifier début et fin
+    firstCall = previous_exec_count != basthon.execution_count
+    previous_exec_count = basthon.execution_count    
+    if firstCall : 
+        historique_prints = ''  
+        last_line = ''
+    
+    # Stocke la string dans un tampon
+    fin = kwargs.get('end', '\n')
+    kwargs2 = {key: value for key, value in kwargs.items() if key not in['end', 'flush']}
+    tampon = StringIO()
+    kwargs_original = kwargs.copy()
+    kwargs_original['file'] = tampon    
+    _print_original(*args, **kwargs_original)    
+    texte_genere = tampon.getvalue().rstrip('\n')
+    tampon.close()
+    
+    if texte_genere:
+        historique_prints+=texte_genere+fin
+    
+    # Ajoute le résultat
+    if(compare(correctStr, historique_prints)):
+        result = messageBravo
+        basthon.breakpointMoveOn()
+    else:        
+        result = messageFail
+    
+    # Affiche la ligne en effaçant le texte précédent  
+    if '\n' not in fin: 
+        line = last_line+texte_genere+fin
+        last_line = line.split("\n")[-1]
+        _print_original(f"\r{line+result+ " " * 50}", **kwargs2, flush=True, end="")
+    else :
+        line = last_line+texte_genere+ " " * 50+fin+result
+        last_line = ''
+        _print_original(f"\r{line}", **kwargs2, flush=True, end="")
 
 
 def store_all_cells_content():
@@ -158,6 +228,19 @@ def remove_shortcuts():
                 Jupyter.keyboard_manager.edit_shortcuts.remove_shortcut(k)
                 
 remove_shortcuts()
+
+
+if '_print_original' not in globals():
+    _print_original = print
+    
+historique_prints = ''
+last_line = ''
+previous_exec_count = 0
+print = print_persistant
+
+
+codes_dict = {}
+lastCode = ''
                         
             
 #####  Réponses exos
