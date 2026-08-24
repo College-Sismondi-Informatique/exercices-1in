@@ -37,6 +37,7 @@ def compare(s1, s2):
     
 def print_persistant(*args, **kwargs):
     global previous_exec_count, compteur, historique_prints, last_line
+    kwargs2 = {key: value for key, value in kwargs.items() if key not in['end', 'flush']}
     
     # Exit if not requested in this cell
     current_cell = Jupyter.notebook.get_cell(next(i for i, cellule in enumerate(Jupyter.notebook.get_cells())
@@ -51,12 +52,11 @@ def print_persistant(*args, **kwargs):
     firstCall = previous_exec_count != basthon.execution_count
     previous_exec_count = basthon.execution_count    
     if firstCall : 
-        historique_prints = ''  
-        last_line = ''
+        historique_prints = ''      
+
     
     # Stocke la string dans un tampon
     fin = kwargs.get('end', '\n')
-    kwargs2 = {key: value for key, value in kwargs.items() if key not in['end', 'flush']}
     tampon = StringIO()
     kwargs_original = kwargs.copy()
     kwargs_original['file'] = tampon    
@@ -75,14 +75,9 @@ def print_persistant(*args, **kwargs):
         result = messageFail
     
     # Affiche la ligne en effaçant le texte précédent  
-    if '\n' not in fin: 
-        line = last_line+texte_genere+fin
-        last_line = line.split("\n")[-1]
-        _print_original(f"\r{line+result+ " " * 50}", **kwargs2, flush=True, end="")
-    else :
-        line = last_line+texte_genere+ " " * 50+fin+result
-        last_line = ''
-        _print_original(f"\r{line}", **kwargs2, flush=True, end="")
+    basthon.clearOutput()
+    _print_original(historique_prints, **kwargs2, flush=True)
+    _print_original(result, **kwargs2, flush=True)
 
 
 def store_all_cells_content():
@@ -234,7 +229,6 @@ if '_print_original' not in globals():
     _print_original = print
     
 historique_prints = ''
-last_line = ''
 previous_exec_count = 0
 print = print_persistant
 
