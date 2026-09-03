@@ -7,21 +7,27 @@ et détecter si les élèves ont répondu ou non.
 
 Structure du dossier attendue :
     .
-    ├── enonce.ipynb
+    ├── enonce.ipynb              (ou chemin fourni via --enonce)
     ├── compiler_evaluations.py
-    ├── *.csv                    (optionnel : liste des participants Moodle)
+    ├── *.csv                     (optionnel : liste des participants Moodle)
     └── <dossier_moodle_élève>_123456_assignsubmission_file/
         └── <notebook_élève>.ipynb
 
 Le notebook généré contient :
     1. Un tableau récapitulatif (fait / pas fait) par élève et par exercice.
     2. Pour chaque exercice : l'énoncé, puis les réponses de chaque élève.
+
+Usage :
+    python compiler_evaluations.py
+    python compiler_evaluations.py --enonce /chemin/vers/mon_enonce.ipynb
 """
 
 import os
 import re
 import csv
+import argparse
 from pathlib import Path
+from itertools import groupby
 from collections import OrderedDict
 import nbformat
 
@@ -233,8 +239,12 @@ def copy_cell(cell):
 # LOGIQUE PRINCIPALE
 # ============================================================================
 
-def main():
-    enonce_path = ROOT_DIR / ENONCE_FILENAME
+def main(enonce_path: Path = None):
+    if enonce_path is None:
+        enonce_path = ROOT_DIR / ENONCE_FILENAME
+    else:
+        enonce_path = Path(enonce_path).resolve()
+
     if not enonce_path.exists():
         print(f"[ERREUR] Énoncé introuvable : {enonce_path}")
         return
@@ -326,8 +336,6 @@ def main():
     )
 
     # --- Tableau récapitulatif ---
-    from itertools import groupby
-
     table_md = "## Tableau récapitulatif de l'avancement\n\n"
     student_items = list(students_data.items())
 
@@ -398,4 +406,13 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    parser = argparse.ArgumentParser(
+        description="Compile les notebooks d'évaluation des élèves."
+    )
+    parser.add_argument(
+        "-e", "--enonce",
+        type=Path,
+        help="Chemin vers le notebook énoncé (défaut : enonce.ipynb dans le dossier courant)",
+    )
+    args = parser.parse_args()
+    main(enonce_path=args.enonce)
