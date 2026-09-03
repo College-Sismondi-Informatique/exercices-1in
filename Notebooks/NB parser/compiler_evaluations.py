@@ -20,6 +20,8 @@ Le notebook généré contient :
 Usage :
     python compiler_evaluations.py
     python compiler_evaluations.py --enonce /chemin/vers/mon_enonce.ipynb
+    python compiler_evaluations.py --light
+    python compiler_evaluations.py --light --enonce /chemin/vers/mon_enonce.ipynb
 """
 
 import os
@@ -244,7 +246,7 @@ def copy_cell(cell):
 # LOGIQUE PRINCIPALE
 # ============================================================================
 
-def main(enonce_path: Path = None):
+def main(enonce_path: Path = None, light_mode: bool = False):
     if enonce_path is None:
         enonce_path = ROOT_DIR / ENONCE_FILENAME
     else:
@@ -355,89 +357,139 @@ def main(enonce_path: Path = None):
                 "absent": True,
             }
 
-    # 4. Construire le notebook de sortie
-    out_cells = []
+    # 4. Construire les notebooks de sortie
+    #    Mode normal : récap global + 1 notebook par classe
+    #    Mode light  : seulement les tableaux récap (pas les réponses détaillées)
+    def build_recap_table(student_items, subgroup_title=None):
+        """Construit le markdown du tableau récapitulatif pour un sous-ensemble d'élèves."""
+        md = "## Tableau récapitulatif de l'avancement\n\n"
+        if subgroup_title:
+            md += f"**{subgroup_title}**\n\n"
 
-    # --- Titre global ---
-    out_cells.append(
-        nbformat.v4.new_markdown_cell("# Compilation des évaluations")
-    )
+        grouped = sorted(student_items, key=lambda item: (item[1]["groupe"] if item[1]["groupe"] else "ZZZ", item[0]))
+        for groupe, group in groupby(grouped, key=lambda item: item[1]["groupe"]):
+            group_list = list(group)
+            if not groupe:
+                md += "### Sans classe\n\n"
+            else:
+                md += f"### Classe {groupe}\n\n"
 
-    # --- Tableau récapitulatif ---
-    table_md = "## Tableau récapitulatif de l'avancement\n\n"
-    student_items = list(students_data.items())
-
-    for groupe, group in groupby(student_items, key=lambda item: item[1]["groupe"]):
-        group_list = list(group)
-        if not groupe:
-            table_md += "### Sans classe\n\n"
-        else:
-            table_md += f"### Classe {groupe}\n\n"
-
-        header = "| Élève |"
-        separator = "|-------|"
-        for ex in enonce_exercises:
-            header += f" Ex {ex['num']} |"
-            separator += "-------|"
-        lines = [header, separator]
-
-        for student_name, data in group_list:
-            display_name = student_name
-            if data.get("absent"):
-                display_name += " *(absent)*"
-            row = f"| {sanitize_table_cell(display_name)} |"
+            header = "| Élève |"
+            separator = "|-------|"
             for ex in enonce_exercises:
-                num = ex["num"]
-                done = data["done"].get(num, False)
-                sym = SYMBOLE_FAIT if done else SYMBOLE_PAS_FAIT
-                exec_count = data["exec_counts"].get(num)
-                color = "green" if done else "red"
-                if exec_count is None:     
-                    exec_count = 0
-                cell_content = f'<span style="font-weight: bold;color:{color}">{exec_count}</span>'
+                header += f" Ex {ex['num']} |"
+                separator += "-------|"
+            lines = [header, separator]
 
-                row += f" {cell_content} |"
-            lines.append(row)
+            for student_name, data in group_list:
+                display_name = student_name
+                if data.get("absent"):
+                    display_name += " *(absent)*"
+                row = f"| {sanitize_table_cell(display_name)} |"
+                for ex in enonce_exercises:
+                    num = ex["num"]
+                    done = data["done"].get(num, False)
+                    sym = SYMBOLE_FAIT if done else SYMBOLE_PAS_FAIT
+                    exec_count = data["exec_counts"].get(num)
+                    color = "green" if done else "red"
+                    if exec_count is None:
+                        exec_count = 0
+                    cell_content = f'<span style="font-weight: bold;color:{color}">{exec_count}</span>'
+                    row += f" {cell_content} |"
+                lines.append(row)
 
-        table_md += "\n".join(lines) + "\n\n"
+            md += "\n".join(lines) + "\n\n"
+        return md
 
-    out_cells.append(
-        nbformat.v4.new_markdown_cell(table_md)
-    )
+    def build_notebook(student_items, title_suffix="", light=False):
+        """Construit un notebook complet ou light pour un sous-ensemble d'élèves."""
+        cells = []
 
-    # --- Sections par exercice ---
-    for ex in enonce_exercises:
-        num = ex["num"]
-        # Titre d'exercice
-        out_cells.append(
+        # Titre
+        titre = "# Compilation des évaluations"
+        if title_suffix:
+            titre += f" - {title_suffix}"
+        cells.append(nbformat.v4.new_markdown_cell(titre))
+
+        # Tableau récapitulatif
+        cells.append(
             nbformat.v4.new_markdown_cell(
-                f"---\n\n## Exercice {num}\n\n"
-                f"**Énoncé**\n\n{ex['text']}"
+                build_recap_table(student_items, subgroup_title=title_suffix)
             )
         )
 
-        for student_name, data in students_data.items():
-            out_cells.append(
-                nbformat.v4.new_markdown_cell(f"### Réponse de {student_name}")
-            )
-            resp_cell = data["responses"].get(num)
-            if resp_cell:
-                out_cells.append(copy_cell(resp_cell))
-            else:
-                if data.get("absent"):
-                    msg = "*Aucun rendu (élève absent).*"
-                else:
-                    msg = "*Aucune réponse détectée.*"
-                out_cells.append(
-                    nbformat.v4.new_markdown_cell(msg)
+        if not light:
+            # Sections par exercice avec réponses détaillées
+            for ex in enonce_exercises:
+                num = ex["num"]
+                cells.append(
+                    nbformat.v4.new_markdown_cell(
+                        f"---\n\n## Exercice {num}\n\n"
+                        f"**Énoncé**\n\n{ex['text']}"
+                    )
                 )
+                for student_name, data in student_items:
+                    cells.append(
+                        nbformat.v4.new_markdown_cell(f"### Réponse de {student_name}")
+                    )
+                    resp_cell = data["responses"].get(num)
+                    if resp_cell:
+                        cells.append(copy_cell(resp_cell))
+                    else:
+                        if data.get("absent"):
+                            msg = "*Aucun rendu (élève absent).*"
+                        else:
+                            msg = "*Aucune réponse détectée.*"
+                        cells.append(nbformat.v4.new_markdown_cell(msg))
+        else:
+            # Note light : on rappelle que les réponses sont dans les notebooks par élève
+            cells.append(
+                nbformat.v4.new_markdown_cell(
+                    "---\n\n*Ce notebook est en mode light. "
+                    "Les réponses détaillées ne sont pas incluses pour alléger le fichier. "
+                    "Elles sont disponibles dans les notebooks individuels des élèves.*"
+                )
+            )
 
-    # 5. Écrire le notebook
-    nb_out = nbformat.v4.new_notebook()
-    nb_out.cells = out_cells
-    output_path = ROOT_DIR / output_filename
-    nbformat.write(nb_out, str(output_path))
-    print(f"[SUCCÈS] Notebook compilé généré : {output_path}")
+        nb = nbformat.v4.new_notebook()
+        nb.cells = cells
+        return nb
+
+    # Grouper les élèves par classe
+    student_items = list(students_data.items())
+    grouped_by_class = {}
+    for groupe, group in groupby(
+        sorted(student_items, key=lambda item: (item[1]["groupe"] if item[1]["groupe"] else "ZZZ", item[0])),
+        key=lambda item: item[1]["groupe"],
+    ):
+        grouped_by_class[groupe] = list(group)
+
+    # Nom de base du fichier
+    base_name = homework_dir.replace(" ", "_").replace("/", "_").replace("\\", "_") if homework_dir else ROOT_DIR.name.replace(" ", "_")
+
+    if light_mode:
+        # Mode light : fichiers _LIGHT avec tableaux uniquement
+        # 1. Notebook global light
+        global_light_path = ROOT_DIR / f"compilation_{base_name}.ipynb"
+        nb_global = build_notebook(student_items, title_suffix="Toutes classes", light=True)
+        nbformat.write(nb_global, str(global_light_path))
+        print(f"[SUCCÈS] Récap light global généré : {global_light_path}")
+
+    else:
+        # Mode normal :
+        # 1. Notebook global light (tableau récap uniquement)
+        global_path = ROOT_DIR / f"compilation_{base_name}.ipynb"
+        nb_global = build_notebook(student_items, title_suffix="Toutes classes", light=True)
+        nbformat.write(nb_global, str(global_path))
+        print(f"[SUCCÈS] Notebook global récap généré : {global_path}")
+
+        # 2. Un notebook complet (tableaux + réponses) par classe
+        for groupe, items in grouped_by_class.items():
+            suffix = groupe if groupe else "Sans_classe"
+            class_path = ROOT_DIR / f"compilation_{base_name}_{suffix}.ipynb"
+            nb_class = build_notebook(items, title_suffix=suffix, light=False)
+            nbformat.write(nb_class, str(class_path))
+            print(f"[SUCCÈS] Notebook classe {suffix} généré : {class_path}")
 
 
 if __name__ == "__main__":
@@ -449,5 +501,10 @@ if __name__ == "__main__":
         type=Path,
         help="Chemin vers le notebook énoncé (défaut : enonce.ipynb dans le dossier courant)",
     )
+    parser.add_argument(
+        "-l", "--light",
+        action="store_true",
+        help="Mode light : génère seulement les tableaux récapitulatifs (pas de réponses détaillées)",
+    )
     args = parser.parse_args()
-    main(enonce_path=args.enonce)
+    main(enonce_path=args.enonce, light_mode=args.light)
