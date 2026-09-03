@@ -83,34 +83,13 @@ Pour chaque exercice, le tableau affiche :
 
 En complément du tableau principal, le notebook peut également contenir un **tableau anonymisé en HTML**. Voici un exemple de rendu visuel :
 
-<table border="1" cellpadding="5" cellspacing="0" style="border-collapse:collapse;font-family:sans-serif">
-  <tr style="background-color:#f0f0f0">
-    <th>Élève</th>
-    <th>Ex 1</th>
-    <th>Ex 2</th>
-    <th>Ex 3</th>
-  </tr>
-  <tr>
-    <td>Élève 1</td>
-    <td style="color:#2ecc71;font-weight:bold;text-align:center">3</td>
-    <td style="color:#e74c3c;font-weight:bold;text-align:center">0</td>
-    <td style="color:#2ecc71;font-weight:bold;text-align:center">5</td>
-  </tr>
-  <tr>
-    <td>Élève 2</td>
-    <td style="color:#2ecc71;font-weight:bold;text-align:center">2</td>
-    <td style="color:#2ecc71;font-weight:bold;text-align:center">4</td>
-    <td style="color:#e74c3c;font-weight:bold;text-align:center">0</td>
-  </tr>
-  <tr>
-    <td>Élève 3</td>
-    <td style="color:#e74c3c;font-weight:bold;text-align:center">0</td>
-    <td style="color:#e74c3c;font-weight:bold;text-align:center">0</td>
-    <td style="color:#e74c3c;font-weight:bold;text-align:center">0</td>
-  </tr>
-</table>
+| Élève | Ex 1 | Ex 2 | Ex 3 |
+|-------|------|------|------|
+| Élève 1 | 🟢 3 | 🔴 0 | 🟢 5 |
+| Élève 2 | 🟢 2 | 🟢 4 | 🔴 0 |
+| Élève 3 | 🔴 0 | 🔴 0 | 🔴 0 |
 
-> **Vert** = exercice réalisé | **Rouge** = exercice non réalisé | Chiffre = nombre d'exécutions de la cellule
+> 🟢 = exercice réalisé | 🔴 = exercice non réalisé | Chiffre = nombre d'exécutions de la cellule
 
 ### Allègement des fichiers
 Les notebooks générés ne conservent que le **code source** des cellules. Les outputs (graphiques, tableaux, images) sont volontairement ignorés pour réduire la taille des fichiers.
