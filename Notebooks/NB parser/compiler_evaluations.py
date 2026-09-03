@@ -88,7 +88,8 @@ def parse_exercises(nb):
 
     Un exercice est repéré par une cellule markdown contenant
     '!!! note Exercice <num>'.
-    La cellule immédiatement suivante est considérée comme la réponse attendue.
+    Les cellules markdown suivantes sont sautées (consignes) jusqu'à trouver
+    la première cellule code ou raw, considérée comme la réponse attendue.
 
     Retourne une liste de dicts : [{num, text, template_cell}, ...]
     """
@@ -105,23 +106,22 @@ def parse_exercises(nb):
                 ex_num = int(match.group(1))
                 ex_text = cell.source
                 template = None
-                if i + 1 < len(cells):
-                    next_cell = cells[i + 1]
-                    # La cellule suivante est une réponse seulement si ce n'est pas
-                    # elle-même un autre exercice (cas de l'exercice 7 sans cellule de réponse)
-                    is_next_exercise = (
-                        next_cell.cell_type == "markdown"
-                        and re.search(
-                            r"!!!\s+note\s+Exercice\s+\d+",
-                            next_cell.source,
-                            re.IGNORECASE,
-                        )
-                    )
-                    if not is_next_exercise:
+                j = i + 1
+                while j < len(cells):
+                    next_cell = cells[j]
+                    # Si on tombe sur un autre exercice, on s'arrête
+                    if next_cell.cell_type == "markdown" and re.search(
+                        r"!!!\s+note\s+Exercice\s+\d+",
+                        next_cell.source,
+                        re.IGNORECASE,
+                    ):
+                        break
+                    # La réponse attendue est la première cellule code ou raw
+                    if next_cell.cell_type in ("code", "raw"):
                         template = next_cell
-                        # On saute la cellule de réponse dans la boucle principale
-                        # pour éviter qu'elle ne soit traitée comme un exercice indépendant.
-                        i += 1
+                        i = j  # On saute toutes les cellules intermédiaires
+                        break
+                    j += 1
                 exercises.append(
                     {
                         "num": ex_num,
@@ -226,8 +226,11 @@ def build_student_list(existing_students: OrderedDict, participants: dict):
 
 
 def copy_cell(cell):
-    """Crée une nouvelle cellule nbformat à partir d'une cellule existante."""
+    """Crée une nouvelle cellule nbformat à partir d'une cellule existante.
+    
+    Les outputs sont volontairement ignorés pour alléger le notebook compilé."""
     if cell.cell_type == "code":
+        # new_code_cell ne copie que la source : outputs et execution_count sont vidés
         return nbformat.v4.new_code_cell(cell.source)
     elif cell.cell_type == "raw":
         return nbformat.v4.new_raw_cell(cell.source)
@@ -301,29 +304,44 @@ def main(enonce_path: Path = None):
     print(f"[INFO] {len(all_students)} élève(s) au total ({len(absents)} absent(s) + {len(all_students) - len(absents)} rendu(s)).")
 
     # 3. Parser chaque notebook élève
-    students_data = OrderedDict()  # {nom: {responses, done, groupe, absent}}
+    students_data = OrderedDict()  # {nom: {responses, done, exec_counts, groupe, absent}}
     for student_name, nb_path, groupe in all_students:
         if nb_path:
             print(f"[INFO] Analyse de {student_name} ...")
             nb_student = nbformat.read(str(nb_path), as_version=4)
             student_exercises = parse_exercises(nb_student)
 
-            responses = {}  # num -> cell
-            done_flags = {}  # num -> bool
+            responses = {}       # num -> cell
+            done_flags = {}      # num -> bool
+            exec_counts = {}     # num -> int | None
 
             for ex in student_exercises:
                 num = ex["num"]
-                resp_cell = ex["template"]  # la cellule après le markdown d'exercice
+                resp_cell = ex["template"]  # la cellule après l'énoncé (code/raw)
                 responses[num] = resp_cell
 
-                template_cell = templates_by_num.get(num)
-                template_src = template_cell.source if template_cell else ""
-                resp_src = resp_cell.source if resp_cell else ""
-                done_flags[num] = is_done(resp_src, template_src)
+                if resp_cell is None:
+                    done_flags[num] = False
+                    exec_counts[num] = None
+                elif resp_cell.cell_type == "code":
+                    # Validation textuelle (différence avec l'énoncé)
+                    template_cell = templates_by_num.get(num)
+                    template_src = template_cell.source if template_cell else ""
+                    resp_src = resp_cell.source
+                    done_flags[num] = is_done(resp_src, template_src)
+                    exec_counts[num] = resp_cell.execution_count
+                else:
+                    # Fallback markdown/raw : comparaison textuelle
+                    template_cell = templates_by_num.get(num)
+                    template_src = template_cell.source if template_cell else ""
+                    resp_src = resp_cell.source
+                    done_flags[num] = is_done(resp_src, template_src)
+                    exec_counts[num] = None
 
             students_data[student_name] = {
                 "responses": responses,
                 "done": done_flags,
+                "exec_counts": exec_counts,
                 "groupe": groupe,
                 "absent": False,
             }
@@ -332,6 +350,7 @@ def main(enonce_path: Path = None):
             students_data[student_name] = {
                 "responses": {},
                 "done": {ex["num"]: False for ex in enonce_exercises},
+                "exec_counts": {ex["num"]: None for ex in enonce_exercises},
                 "groupe": groupe,
                 "absent": True,
             }
@@ -369,8 +388,15 @@ def main(enonce_path: Path = None):
             row = f"| {sanitize_table_cell(display_name)} |"
             for ex in enonce_exercises:
                 num = ex["num"]
-                sym = SYMBOLE_FAIT if data["done"].get(num, False) else SYMBOLE_PAS_FAIT
-                row += f" {sym} |"
+                done = data["done"].get(num, False)
+                sym = SYMBOLE_FAIT if done else SYMBOLE_PAS_FAIT
+                exec_count = data["exec_counts"].get(num)
+                color = "green" if done else "red"
+                if exec_count is None:     
+                    exec_count = 0
+                cell_content = f'<span style="font-weight: bold;color:{color}">{exec_count}</span>'
+
+                row += f" {cell_content} |"
             lines.append(row)
 
         table_md += "\n".join(lines) + "\n\n"
