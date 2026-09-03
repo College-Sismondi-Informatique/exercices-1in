@@ -35,7 +35,6 @@ import nbformat
 # CONFIGURATION
 # ============================================================================
 ENONCE_FILENAME = "enonce.ipynb"
-OUTPUT_FILENAME = "compilation.ipynb"
 # Dossier racine contenant les rendus (défaut : dossier courant du script)
 ROOT_DIR = Path(__file__).parent.resolve()
 # Symboles pour le tableau récapitulatif
@@ -134,17 +133,18 @@ def parse_exercises(nb):
     return exercises
 
 
-def find_student_notebooks(root: Path):
+def find_student_notebooks(root: Path, output_filename: str = "compilation.ipynb"):
     """
-    Retourne un OrderedDict {nom_élève_normalisé: chemin_notebook}.
+    Retourne un tuple (OrderedDict {nom_élève_normalisé: chemin_notebook}, dossier_des_devoirs).
 
     Le nom de l'élève est extrait du nom du dossier parent, supposé être
     de la forme :  NOM PRENOM_123456_assignsubmission_file
     """
     students = OrderedDict()
+    homework_dir = None
     for nb_path in sorted(root.rglob("*.ipynb")):
         # On ignore l'énoncé et le notebook de sortie potentiel
-        if nb_path.name == ENONCE_FILENAME or nb_path.name == OUTPUT_FILENAME:
+        if nb_path.name == ENONCE_FILENAME or nb_path.name == output_filename:
             continue
 
         # Extraction du nom d'élève depuis le dossier parent
@@ -153,12 +153,14 @@ def find_student_notebooks(root: Path):
         name_match = re.match(r"(.+?)_\d+_assignsubmission_file$", parent_name)
         if name_match:
             student_name = name_match.group(1).strip()
+            if homework_dir is None:
+                homework_dir = nb_path.parent.parent.name
         else:
             # Fallback : nom du fichier sans extension
             student_name = nb_path.stem
 
         students[normalize_name(student_name)] = nb_path
-    return students
+    return students, homework_dir
 
 
 def load_participants(csv_path: Path):
@@ -264,11 +266,18 @@ def main(enonce_path: Path = None):
     templates_by_num = {ex["num"]: ex["template"] for ex in enonce_exercises}
 
     # 2. Découvrir les notebooks élèves
-    existing_students = find_student_notebooks(ROOT_DIR)
+    existing_students, homework_dir = find_student_notebooks(ROOT_DIR)
     print(f"[INFO] {len(existing_students)} rendu(s) trouvé(s).")
     if not existing_students:
         print("[ERREUR] Aucun notebook d'élève détecté.")
         return
+
+    # Nom du fichier de sortie basé sur le dossier contenant les devoirs
+    if homework_dir:
+        clean_name = homework_dir.replace(" ", "_").replace("/", "_").replace("\\", "_")
+        output_filename = f"compilation_{clean_name}.ipynb"
+    else:
+        output_filename = f"compilation_{ROOT_DIR.name.replace(' ', '_')}.ipynb"
 
     # 2b. Charger participants CSV si présent
     csv_files = sorted(ROOT_DIR.glob(CSV_PATTERN))
@@ -400,7 +409,7 @@ def main(enonce_path: Path = None):
     # 5. Écrire le notebook
     nb_out = nbformat.v4.new_notebook()
     nb_out.cells = out_cells
-    output_path = ROOT_DIR / OUTPUT_FILENAME
+    output_path = ROOT_DIR / output_filename
     nbformat.write(nb_out, str(output_path))
     print(f"[SUCCÈS] Notebook compilé généré : {output_path}")
 
