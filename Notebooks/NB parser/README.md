@@ -79,32 +79,36 @@ Pour chaque exercice, le tableau affiche :
 - Le nombre d'exécutions de la cellule en **vert** si l'exercice est fait, **rouge** sinon.
 - `(absent)` à côté du nom de l'élève si aucun rendu n'a été déposé.
 
-### Tableau anonymisé (exemple en HTML)
+### Tableau anonymisé (exemple)
 
-En complément du tableau principal, un **tableau anonymisé en HTML** est disponible dans le notebook. Il reprend les mêmes indicateurs sans divulguer les noms des élèves :
+En complément du tableau principal, le notebook peut également contenir un **tableau anonymisé en HTML**. Voici un exemple de rendu visuel :
 
-```html
-<table border="1" cellpadding="4" cellspacing="0" style="border-collapse:collapse;font-family:sans-serif">
+<table border="1" cellpadding="5" cellspacing="0" style="border-collapse:collapse;font-family:sans-serif">
   <tr style="background-color:#f0f0f0">
-    <th>Élève</th><th>Ex 1</th><th>Ex 2</th><th>Ex 3</th>
+    <th>Élève</th>
+    <th>Ex 1</th>
+    <th>Ex 2</th>
+    <th>Ex 3</th>
   </tr>
   <tr>
-    <td>Élève 1</td><td style="color:#2ecc71;font-weight:bold;text-align:center">3</td>
+    <td>Élève 1</td>
+    <td style="color:#2ecc71;font-weight:bold;text-align:center">3</td>
     <td style="color:#e74c3c;font-weight:bold;text-align:center">0</td>
     <td style="color:#2ecc71;font-weight:bold;text-align:center">5</td>
   </tr>
   <tr>
-    <td>Élève 2</td><td style="color:#2ecc71;font-weight:bold;text-align:center">2</td>
+    <td>Élève 2</td>
+    <td style="color:#2ecc71;font-weight:bold;text-align:center">2</td>
     <td style="color:#2ecc71;font-weight:bold;text-align:center">4</td>
     <td style="color:#e74c3c;font-weight:bold;text-align:center">0</td>
   </tr>
   <tr>
-    <td>Élève 3</td><td style="color:#e74c3c;font-weight:bold;text-align:center">0</td>
+    <td>Élève 3</td>
+    <td style="color:#e74c3c;font-weight:bold;text-align:center">0</td>
     <td style="color:#e74c3c;font-weight:bold;text-align:center">0</td>
     <td style="color:#e74c3c;font-weight:bold;text-align:center">0</td>
   </tr>
 </table>
-```
 
 > **Vert** = exercice réalisé | **Rouge** = exercice non réalisé | Chiffre = nombre d'exécutions de la cellule
 
