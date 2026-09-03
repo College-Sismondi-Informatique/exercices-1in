@@ -9,6 +9,7 @@ Structure du dossier attendue :
     .
     ├── enonce.ipynb
     ├── compiler_evaluations.py
+    ├── *.csv                    (optionnel : liste des participants Moodle)
     └── <dossier_moodle_élève>_123456_assignsubmission_file/
         └── <notebook_élève>.ipynb
 
@@ -19,6 +20,7 @@ Le notebook généré contient :
 
 import os
 import re
+import csv
 from pathlib import Path
 from collections import OrderedDict
 import nbformat
@@ -33,6 +35,8 @@ ROOT_DIR = Path(__file__).parent.resolve()
 # Symboles pour le tableau récapitulatif
 SYMBOLE_FAIT = "✅"
 SYMBOLE_PAS_FAIT = "❌"
+# Pattern pour détecter automatiquement le fichier CSV des participants
+CSV_PATTERN = "*.csv"
 
 
 # ============================================================================
@@ -42,6 +46,11 @@ SYMBOLE_PAS_FAIT = "❌"
 def sanitize_table_cell(text: str) -> str:
     """Échappe les caractères problématiques pour une cellule de tableau markdown."""
     return text.replace("|", "\\|").replace("\n", " ")
+
+
+def normalize_name(name: str) -> str:
+    """Normalise un nom pour la comparaison (majuscules, espaces uniques)."""
+    return " ".join(name.strip().split()).upper()
 
 
 def is_done(response_src: str, template_src: str = "") -> bool:
@@ -121,7 +130,7 @@ def parse_exercises(nb):
 
 def find_student_notebooks(root: Path):
     """
-    Retourne un OrderedDict {nom_élève: chemin_notebook}.
+    Retourne un OrderedDict {nom_élève_normalisé: chemin_notebook}.
 
     Le nom de l'élève est extrait du nom du dossier parent, supposé être
     de la forme :  NOM PRENOM_123456_assignsubmission_file
@@ -142,8 +151,70 @@ def find_student_notebooks(root: Path):
             # Fallback : nom du fichier sans extension
             student_name = nb_path.stem
 
-        students[student_name] = nb_path
+        students[normalize_name(student_name)] = nb_path
     return students
+
+
+def load_participants(csv_path: Path):
+    """
+    Charge le CSV Moodle des participants.
+    Retourne un dict {nom_normalisé: {prenom, nom, groupe}}.
+    """
+    participants = {}
+    with open(csv_path, newline="", encoding="utf-8-sig") as f:
+        reader = csv.DictReader(f)
+        # Nettoyer le BOM potentiel sur les noms de colonnes
+        if reader.fieldnames:
+            reader.fieldnames = [
+                name.lstrip("\ufeff").strip() for name in reader.fieldnames
+            ]
+        for row in reader:
+            prenom = row.get("Prénom", "").strip()
+            nom = row.get("Nom de famille", "").strip()
+            groupe = row.get("Groupes", "").strip()
+            if not prenom or not nom:
+                continue
+            # La clé suit le même format que les dossiers Moodle : NOM PRENOM
+            name_key = normalize_name(f"{nom} {prenom}")
+            participants[name_key] = {
+                "prenom": prenom,
+                "nom": nom,
+                "groupe": groupe,
+            }
+    return participants
+
+
+def build_student_list(existing_students: OrderedDict, participants: dict):
+    """
+    Construit la liste finale des élèves.
+    Retourne une liste de tuples : (nom_affichage, chemin_notebook, groupe)
+    Triée par groupe puis par nom.
+    """
+    if not participants:
+        # Comportement original : uniquement les rendus trouvés, triés par nom
+        items = [(name, path, "") for name, path in existing_students.items()]
+        items.sort(key=lambda x: x[0])
+        return items
+
+    combined = []
+    matched_existing = set()
+
+    for name_key, info in participants.items():
+        if not info["groupe"]:
+            continue
+        path = existing_students.get(name_key)
+        combined.append((name_key, path, info["groupe"]))
+        if path:
+            matched_existing.add(name_key)
+
+    # Ajouter les rendus supplémentaires non listés dans le CSV
+    for name, path in existing_students.items():
+        if name not in matched_existing:
+            combined.append((name, path, ""))
+
+    # Tri par groupe (vide en dernier) puis par nom
+    combined.sort(key=lambda x: (x[2] if x[2] else "ZZZ", x[0]))
+    return combined
 
 
 def copy_cell(cell):
@@ -183,36 +254,68 @@ def main():
     templates_by_num = {ex["num"]: ex["template"] for ex in enonce_exercises}
 
     # 2. Découvrir les notebooks élèves
-    students = find_student_notebooks(ROOT_DIR)
-    print(f"[INFO] {len(students)} élève(s) trouvé(s).")
-    if not students:
+    existing_students = find_student_notebooks(ROOT_DIR)
+    print(f"[INFO] {len(existing_students)} rendu(s) trouvé(s).")
+    if not existing_students:
         print("[ERREUR] Aucun notebook d'élève détecté.")
         return
 
+    # 2b. Charger participants CSV si présent
+    csv_files = sorted(ROOT_DIR.glob(CSV_PATTERN))
+    participants = None
+    if csv_files:
+        print(f"[INFO] Fichier CSV détecté : {csv_files[0].name}")
+        participants = load_participants(csv_files[0])
+        print(
+            f"[INFO] {len(participants)} participant(s) chargé(s) depuis {csv_files[0].name}"
+        )
+        if participants:
+            first = next(iter(participants.items()))
+            print(f"[DEBUG] Exemple de participant lu : {first[0]} → groupe {first[1]['groupe']}")
+        else:
+            print("[AVERTISSEMENT] Aucun participant valide trouvé dans le CSV (vérifiez l'encodage ou les colonnes).")
+    else:
+        print("[INFO] Aucun fichier CSV trouvé, mode sans participant activé.")
+
+    all_students = build_student_list(existing_students, participants)
+    absents = [s for s in all_students if s[1] is None]
+    print(f"[INFO] {len(all_students)} élève(s) au total ({len(absents)} absent(s) + {len(all_students) - len(absents)} rendu(s)).")
+
     # 3. Parser chaque notebook élève
-    students_data = OrderedDict()  # {nom: {responses: {num: cell}, done: {num: bool}}}
-    for student_name, nb_path in students.items():
-        print(f"[INFO] Analyse de {student_name} ...")
-        nb_student = nbformat.read(str(nb_path), as_version=4)
-        student_exercises = parse_exercises(nb_student)
+    students_data = OrderedDict()  # {nom: {responses, done, groupe, absent}}
+    for student_name, nb_path, groupe in all_students:
+        if nb_path:
+            print(f"[INFO] Analyse de {student_name} ...")
+            nb_student = nbformat.read(str(nb_path), as_version=4)
+            student_exercises = parse_exercises(nb_student)
 
-        responses = {}  # num -> cell
-        done_flags = {}  # num -> bool
+            responses = {}  # num -> cell
+            done_flags = {}  # num -> bool
 
-        for ex in student_exercises:
-            num = ex["num"]
-            resp_cell = ex["template"]  # la cellule après le markdown d'exercice
-            responses[num] = resp_cell
+            for ex in student_exercises:
+                num = ex["num"]
+                resp_cell = ex["template"]  # la cellule après le markdown d'exercice
+                responses[num] = resp_cell
 
-            template_cell = templates_by_num.get(num)
-            template_src = template_cell.source if template_cell else ""
-            resp_src = resp_cell.source if resp_cell else ""
-            done_flags[num] = is_done(resp_src, template_src)
+                template_cell = templates_by_num.get(num)
+                template_src = template_cell.source if template_cell else ""
+                resp_src = resp_cell.source if resp_cell else ""
+                done_flags[num] = is_done(resp_src, template_src)
 
-        students_data[student_name] = {
-            "responses": responses,
-            "done": done_flags,
-        }
+            students_data[student_name] = {
+                "responses": responses,
+                "done": done_flags,
+                "groupe": groupe,
+                "absent": False,
+            }
+        else:
+            # Élève absent : aucun rendu
+            students_data[student_name] = {
+                "responses": {},
+                "done": {ex["num"]: False for ex in enonce_exercises},
+                "groupe": groupe,
+                "absent": True,
+            }
 
     # 4. Construire le notebook de sortie
     out_cells = []
@@ -223,26 +326,40 @@ def main():
     )
 
     # --- Tableau récapitulatif ---
-    header = "| Élève |"
-    separator = "|-------|"
-    for ex in enonce_exercises:
-        header += f" Ex {ex['num']} |"
-        separator += "-------|"
-    table_lines = [header, separator]
+    from itertools import groupby
 
-    for student_name, data in students_data.items():
-        row = f"| {sanitize_table_cell(student_name)} |"
+    table_md = "## Tableau récapitulatif de l'avancement\n\n"
+    student_items = list(students_data.items())
+
+    for groupe, group in groupby(student_items, key=lambda item: item[1]["groupe"]):
+        group_list = list(group)
+        if not groupe:
+            table_md += "### Sans classe\n\n"
+        else:
+            table_md += f"### Classe {groupe}\n\n"
+
+        header = "| Élève |"
+        separator = "|-------|"
         for ex in enonce_exercises:
-            num = ex["num"]
-            sym = SYMBOLE_FAIT if data["done"].get(num, False) else SYMBOLE_PAS_FAIT
-            row += f" {sym} |"
-        table_lines.append(row)
+            header += f" Ex {ex['num']} |"
+            separator += "-------|"
+        lines = [header, separator]
+
+        for student_name, data in group_list:
+            display_name = student_name
+            if data.get("absent"):
+                display_name += " *(absent)*"
+            row = f"| {sanitize_table_cell(display_name)} |"
+            for ex in enonce_exercises:
+                num = ex["num"]
+                sym = SYMBOLE_FAIT if data["done"].get(num, False) else SYMBOLE_PAS_FAIT
+                row += f" {sym} |"
+            lines.append(row)
+
+        table_md += "\n".join(lines) + "\n\n"
 
     out_cells.append(
-        nbformat.v4.new_markdown_cell(
-            "## Tableau récapitulatif de l'avancement\n\n"
-            + "\n".join(table_lines)
-        )
+        nbformat.v4.new_markdown_cell(table_md)
     )
 
     # --- Sections par exercice ---
@@ -264,8 +381,12 @@ def main():
             if resp_cell:
                 out_cells.append(copy_cell(resp_cell))
             else:
+                if data.get("absent"):
+                    msg = "*Aucun rendu (élève absent).*"
+                else:
+                    msg = "*Aucune réponse détectée.*"
                 out_cells.append(
-                    nbformat.v4.new_markdown_cell("*Aucune réponse détectée.*")
+                    nbformat.v4.new_markdown_cell(msg)
                 )
 
     # 5. Écrire le notebook
