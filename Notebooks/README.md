@@ -22,8 +22,8 @@
 <td style="height: 56.0667px;">
 <p> <strong>Premier </strong>programme</p>
 </td>
-<td style="height: 56.0667px; text-align: center;"><a href="https://notebook.basthon.fr/?extensions=sequenced%2Cromd%2Clinenumbers&amp;kernel=python3-legacy&amp;from=https://raw.githubusercontent.com/College-Sismondi-Informatique/exercices-1in/refs/heads/main/Notebooks/01a_Premier_programme.ipynb" target="_blank" rel="noopener">Leçon n°1a</a></td>
-<td style="height: 56.0667px; text-align: center;"><a href="https://notebook.basthon.fr/?extensions=sequenced%2Cromd%2Clinenumbers&amp;kernel=python3-legacy&amp;from=https://raw.githubusercontent.com/College-Sismondi-Informatique/exercices-1in/refs/heads/main/Notebooks/01a_Premier_programme_corrige.ipynb" target="_blank" rel="noopener">Leçon n°1a - corrigé</a></td>
+<td style="height: 56.0667px; text-align: center;"><a href="https://notebook.basthon.fr/?extensions=sequenced,romd,linenumbers&kernel=python3-legacy&from=https://raw.githubusercontent.com/College-Sismondi-Informatique/exercices-1in/refs/heads/robot/Notebooks/01a_Premier_programme.ipynb&module=https%3A%2F%2Fraw.githubusercontent.com%2FCollege-Sismondi-Informatique%2Fexercices-1in%2Frefs%2Fheads%2Fmain%2Frobot%2Frobot.py&aux=https://raw.githubusercontent.com/College-Sismondi-Informatique/exercices-1in/refs/heads/main/Notebooks/_validation.py#" target="_blank" rel="noopener">Leçon n°1a</a></td>
+<td style="height: 56.0667px; text-align: center;"><a href="https://notebook.basthon.fr/?extensions=romd,linenumbers&kernel=python3-legacy&from=https://raw.githubusercontent.com/College-Sismondi-Informatique/exercices-1in/refs/heads/robot/Notebooks/01a_Premier_programme_corrige.ipynb&module=https%3A%2F%2Fraw.githubusercontent.com%2FCollege-Sismondi-Informatique%2Fexercices-1in%2Frefs%2Fheads%2Fmain%2Frobot%2Frobot.py&aux=https://raw.githubusercontent.com/College-Sismondi-Informatique/exercices-1in/refs/heads/main/Notebooks/_validation.py#" target="_blank" rel="noopener">Leçon n°1a - corrigé</a></td>
 </tr>
 <tr style="height: 60.6667px;">
 <td style="height: 60.6667px;"> Complément <strong>print </strong><br> Nombre entier - nombre réel - ASCII - UTF-8</td>
