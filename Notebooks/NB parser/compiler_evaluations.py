@@ -102,7 +102,7 @@ def parse_exercises(nb):
         cell = cells[i]
         if cell.cell_type == "markdown":
             match = re.search(
-                r"!!!\s+note\s+Exercice\s+(\d+)", cell.source, re.IGNORECASE
+                r"!!!\s+note.*Exercice\s+(\d+)", cell.source, re.IGNORECASE
             )
             if match:
                 ex_num = int(match.group(1))
