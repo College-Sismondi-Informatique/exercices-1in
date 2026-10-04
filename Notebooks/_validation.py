@@ -222,9 +222,15 @@ def remove_shortcuts():
             else:
                 Jupyter.keyboard_manager.edit_shortcuts.remove_shortcut(k)
                 
-remove_shortcuts()
+                
+# Ajout pour dessin
+
+def rvb_vers_hexa(rouge, vert, bleu):
+    return f"#{rouge:02X}{vert:02X}{bleu:02X}"
+                
 
 
+# Initialisation
 if '_print_original' not in globals():
     _print_original = print
     
@@ -232,9 +238,10 @@ historique_prints = ''
 previous_exec_count = 0
 print = print_persistant
 
-
 codes_dict = {}
 lastCode = ''
+
+remove_shortcuts()
                         
             
 #####  Réponses exos
