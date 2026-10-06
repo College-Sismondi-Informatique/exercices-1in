@@ -254,7 +254,7 @@ def dessiner_grille(M, TAILLE_PIXEL = 10,    ORIGINE_X = -150,    ORIGINE_Y = 15
 
 
 def commencer(titre):
-    titre =  titre if not ".ipynb" in titre else titre+".ipynb"
+    titre =  titre if ".ipynb" in titre else titre+".ipynb"
     Jupyter.notebook.set_notebook_name(titre)
     basthon.breakpointMoveOn()
                 
