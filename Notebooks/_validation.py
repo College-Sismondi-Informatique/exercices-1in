@@ -223,9 +223,34 @@ def remove_shortcuts():
                 Jupyter.keyboard_manager.edit_shortcuts.remove_shortcut(k)
                 
                 
-# Ajout pour dessin
+# Fonctions pour chapitre images
 def rvb_vers_hexa(rouge, vert, bleu):
     return f"#{rouge:02X}{vert:02X}{bleu:02X}"
+
+def carre_plein(x, y, taille, couleur):
+    penup()
+    goto(x, y)
+    pendown()
+    color(couleur)
+    begin_fill()
+    for _ in range(4):
+        forward(taille)
+        right(90)
+    end_fill()
+
+def dessiner_grille(M, TAILLE_PIXEL = 10,    ORIGINE_X = -150,    ORIGINE_Y = 150):        
+    hideturtle()
+    speed(0)
+    y = ORIGINE_Y
+    for ligne in M:
+        x = ORIGINE_X
+        for valeur in ligne:
+            if valeur == 0:
+                carre_plein(x, y, TAILLE_PIXEL, "black")
+            else:
+                carre_plein(x, y, TAILLE_PIXEL, "white")
+            x += TAILLE_PIXEL
+        y -= TAILLE_PIXEL
 
 
 def commencer(titre):
