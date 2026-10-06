@@ -228,6 +228,7 @@ def rvb_vers_hexa(rouge, vert, bleu):
     return f"#{rouge:02X}{vert:02X}{bleu:02X}"
 
 def carre_plein(x, y, taille, couleur):
+    from turtle import *
     penup()
     goto(x, y)
     pendown()
@@ -238,7 +239,8 @@ def carre_plein(x, y, taille, couleur):
         right(90)
     end_fill()
 
-def dessiner_grille(M, TAILLE_PIXEL = 10,    ORIGINE_X = -150,    ORIGINE_Y = 150):        
+def dessiner_grille(M, TAILLE_PIXEL = 10,    ORIGINE_X = -150,    ORIGINE_Y = 150):     
+    from turtle import *   
     hideturtle()
     speed(0)
     y = ORIGINE_Y
