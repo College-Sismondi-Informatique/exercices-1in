@@ -239,17 +239,15 @@ def carre_plein(x, y, taille, couleur):
         turtle.right(90)
     turtle.end_fill()
 
-def dessiner_grille(M, TAILLE_PIXEL = 10,    ORIGINE_X = -150,    ORIGINE_Y = 150):   
+def dessiner_grille(M, palette= {0: "black",    1: "white"}, TAILLE_PIXEL = 10,    ORIGINE_X = -150,    ORIGINE_Y = 150):   
     turtle.hideturtle()
     turtle.speed(0)
     y = ORIGINE_Y
     for ligne in M:
         x = ORIGINE_X
-        for valeur in ligne:
-            if valeur == 0:
-                carre_plein(x, y, TAILLE_PIXEL, "black")
-            else:
-                carre_plein(x, y, TAILLE_PIXEL, "white")
+        for indice in ligne:
+            couleur = palette.get(indice, "white")
+            carre_plein(x, y, TAILLE_PIXEL, couleur)
             x += TAILLE_PIXEL
         y -= TAILLE_PIXEL
 
