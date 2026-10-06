@@ -224,9 +224,14 @@ def remove_shortcuts():
                 
                 
 # Ajout pour dessin
-
 def rvb_vers_hexa(rouge, vert, bleu):
     return f"#{rouge:02X}{vert:02X}{bleu:02X}"
+
+
+def commencer(titre):
+    titre =  titre if not ".ipynb" in titre else titre+".ipynb"
+    Jupyter.notebook.set_notebook_name(titre)
+    basthon.breakpointMoveOn()
                 
 
 
