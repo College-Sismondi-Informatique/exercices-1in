@@ -71,7 +71,7 @@ def print_persistant(*args, **kwargs):
     # Ajoute le résultat
     if(compare(correctStr, historique_prints)):
         result = messageBravo
-        basthon.breakpointMoveOn()
+        basthon._breakpointMoveOn()
     else:        
         result = messageFail
     
@@ -255,7 +255,7 @@ def dessiner_grille(M, palette= {0: "black",    1: "white"}, TAILLE_PIXEL = 10, 
 def commencer(titre):
     titre =  titre if ".ipynb" in titre else titre+".ipynb"
     Jupyter.notebook.set_notebook_name(titre)
-    basthon.breakpointMoveOn()
+    basthon._breakpointMoveOn()
                 
 
 
